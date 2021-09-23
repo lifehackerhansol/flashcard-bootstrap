@@ -1,146 +1,94 @@
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
-.SECONDARY:
-
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
 include $(DEVKITARM)/ds_rules
 
-export HBMENU_MAJOR	:= 0
-export HBMENU_MINOR	:= 0
-export HBMENU_PATCH	:= 1
+export TARGET		:=	booter
+export TOPDIR		:=	$(CURDIR)
+export DATA			:=	data
 
 
-VERSION	:=	$(HBMENU_MAJOR).$(HBMENU_MINOR).$(HBMENU_PATCH)
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# INCLUDES is a list of directories containing extra header files
-# DATA is a list of directories containing binary files embedded using bin2o
-# GRAPHICS is a list of directories containing image files to be converted with grit
-#---------------------------------------------------------------------------------
-TARGET		:=	hbload
-BUILD		:=	build
-SOURCES		:=	source
-INCLUDES	:=	include
-DATA		:=	data
-GRAPHICS	:=  gfx
+BINFILES	:=	load.bin
 
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork
-
-CFLAGS	:=	-g -Wall -O2 \
-		-ffunction-sections -fdata-sections \
- 		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
-		-ffast-math \
-		$(ARCH)
-
-CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
-
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g -Wl,--gc-sections $(ARCH) -Wl,-Map,$(notdir $*.map)
-
-#---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project (order is important)
-#---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lnds9
-
-
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS	:=	$(LIBNDS)
-
-#---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
-
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
-
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
-
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	load.bin bootstub.bin exceptionstub.bin
-
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(CPPFILES)),)
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CC)
-#---------------------------------------------------------------------------------
-else
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
-#---------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(PNGFILES:.png=.o) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
-					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-					-I$(CURDIR)/$(BUILD)
-
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
-
-icons := $(wildcard *.bmp)
-
-ifneq (,$(findstring $(TARGET).bmp,$(icons)))
-	export GAME_ICON := $(CURDIR)/$(TARGET).bmp
-else
-	ifneq (,$(findstring icon.bmp,$(icons)))
-		export GAME_ICON := $(CURDIR)/icon.bmp
-	endif
-endif
-
-.PHONY: bootloader bootstub BootStrap exceptionstub $(BUILD) clean
-
-all:	bootloader bootstub BootStrap
-
-dist:	all
-	@rm -fr hbload
-	@mkdir hbload
-	@cp -r BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.dat BootStrap/ez5sys.bin BootStrap/akmenu4.nds BootStrap/ismat.dat BootStrap/R4iLS BootStrap/ACEP BootStrap/Gateway hbload
-	@mkdir hbload/M3DS
-	@cp BootStrap/menu.xx resource/M3DSR/* hbload/M3DS
-	@tar -cvjf flashcard-bootstrap-$(VERSION).tar.bz2 --exclude=*.DS_Store* --exclude=*.tar.bz2 hbload README.md license.txt
+.PHONY: checkarm7 checkarm9 bootloader bootstub
 
 #---------------------------------------------------------------------------------
-$(BUILD):
-	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+# main targets
+#---------------------------------------------------------------------------------
+all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT menu.xx
+
+_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4tfv2.dldi
+	@dlditool DLDI/r4tfv2.dldi $<
+	@r4denc $< $@
+
+ez5sys.bin	:	$(TARGET).nds DLDI/EZ5V2.dldi
+	@cp $< $@
+	@dlditool DLDI/EZ5V2.dldi $@
+
+akmenu4.nds	:	$(TARGET).nds  DLDI/ak2_sd.dldi
+	@cp $< $@
+	@dlditool DLDI/ak2_sd.dldi $@
+
+TTMENU.DAT	:	$(TARGET).nds  DLDI/DSTTDLDIboyakkeyver.dldi
+	@cp $< $@
+	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
+
+_BOOT_MP.NDS	:	$(TARGET).nds DLDI/mpcf.dldi
+	@cp $< $@
+	@dlditool DLDI/mpcf.dldi $@
+
+ismat.dat	:	$(TARGET).nds DLDI/mati.dldi
+	@cp $< $@
+	@dlditool DLDI/mati.dldi $@
+
+ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+	@[ -d ACEP ] || mkdir -p ACEP
+	@dlditool DLDI/EX4DS_R4iLS.dldi $<
+	@r4denc --key 0x4002 $< $@
+	
+R4iLS/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+	@[ -d R4iLS ] || mkdir -p R4iLS
+	@dlditool DLDI/EX4DS_R4iLS.dldi $<
+	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin
+	@cp resource/r4isdhc.com.cn_header.bin header.bin
+	@ndstool -c $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	@r4denc --key 0x4002 $< $@
+	@rm arm9.bin arm7.bin banner.bin header.bin
+	
+Gateway/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+	@[ -d Gateway ] || mkdir -p Gateway
+	@dlditool DLDI/EX4DS_R4iLS.dldi $<
+	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin
+	@cp resource/Gateway_Blue_header.bin header.bin
+	@ndstool -c $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	@r4denc --key 0x4002 $< $@
+	@rm arm9.bin arm7.bin banner.bin header.bin
+	
+menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
+	@cp $< BOOTSTRAP_M3.nds
+	@dlditool DLDI/M3DSReal.dldi BOOTSTRAP_M3.nds
+	@./tools/dsbize BOOTSTRAP_M3.nds $@ 0x12
+	@rm BOOTSTRAP_M3.nds
+
+# _DS_MENU_ULTRA.DAT	:	$(TARGET).nds r4ultra.dldi
+#	@cp $< $@
+#	@dlditool DLDI/r4ultra.dldi $@
 
 #---------------------------------------------------------------------------------
-clean:
-	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data *.bz2 hbload
-	@$(MAKE) -C bootloader clean
-	@$(MAKE) -C bootstub clean
-	@$(MAKE) -C BootStrap clean
+$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf
+	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 
 data:
-	@mkdir -p data
+	@mkdir -p $@
 
 bootloader: data
 	@$(MAKE) -C bootloader LOADBIN=$(CURDIR)/data/load.bin
@@ -148,30 +96,20 @@ bootloader: data
 bootstub: data
 	@$(MAKE) -C bootstub
 
-BootStrap:
-	@$(MAKE) -C BootStrap
+#---------------------------------------------------------------------------------
+$(TARGET).arm7.elf:
+	$(MAKE) -C arm7
+	
+#---------------------------------------------------------------------------------
+$(TARGET).arm9.elf: bootloader bootstub
+	$(MAKE) -C arm9
 
 #---------------------------------------------------------------------------------
-else
+clean:
+	$(MAKE) -C arm9 clean
+	$(MAKE) -C arm7 clean
+	$(MAKE) -C bootloader clean
+	$(MAKE) -C bootstub clean
+	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway ismat.dat _DS_MENU_ULTRA.DAT menu.xx
+	rm -rf data
 
-#---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	$(bin2o)
-
-#---------------------------------------------------------------------------------
-# This rule creates assembly source files using grit
-# grit takes an image file and a .grit describing how the file is to be processed
-# add additional rules like this for each image extension
-# you use in the graphics folders
-#---------------------------------------------------------------------------------
-%.s %.h   : %.png %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
--include $(DEPSDIR)/*.d
-
-#---------------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------------
