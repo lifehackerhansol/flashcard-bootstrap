@@ -17,7 +17,6 @@ hbload
 bootloader/*build
 bootloader/load.bin
 bootloader/load.elf
-tools/*
 !resource/*
 !resource/M3DSR/*
 !alternate_loaders/*/*
