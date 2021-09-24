@@ -8,6 +8,7 @@
 *.dsi
 *.cia
 *.xx
+*.SC
 BootStrap/arm7/build
 BootStrap/arm9/build
 data

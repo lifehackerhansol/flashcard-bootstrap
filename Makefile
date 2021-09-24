@@ -57,21 +57,17 @@ ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	
 R4iLS/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@[ -d R4iLS ] || mkdir -p R4iLS
-	@dlditool DLDI/EX4DS_R4iLS.dldi $<
-	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin
-	@cp resource/r4isdhc.com.cn_header.bin header.bin
-	@ndstool -c $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
-	@r4denc --key 0x4002 $< $@
-	@rm arm9.bin arm7.bin banner.bin header.bin
+	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	@dlditool DLDI/EX4DS_R4iLS.dldi $@
+	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
+	@rm -rf R4iLS/_DSMENU.nds
 	
 Gateway/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@[ -d Gateway ] || mkdir -p Gateway
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
-	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin
-	@cp resource/Gateway_Blue_header.bin header.bin
-	@ndstool -c $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
-	@r4denc --key 0x4002 $< $@
-	@rm arm9.bin arm7.bin banner.bin header.bin
+	@ndstool -h 0x200 -g "XXXX" "XX" "R4IT" -c Gateway/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
+	@rm Gateway/_DSMENU.nds
 	
 menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
 	@cp $< BOOTSTRAP_M3.nds
