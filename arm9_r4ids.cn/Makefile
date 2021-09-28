@@ -18,7 +18,7 @@ BUILD		:=	build
 SOURCES		:=	../arm9/source
 INCLUDES	:=	../arm9/include
 DATA		:=	../data
-TARGET		:=	$(TARGET)_r4idsn
+TARGET		:=	$(TARGET)_r4ids.cn
 
 #---------------------------------------------------------------------------------
 # options for code generation

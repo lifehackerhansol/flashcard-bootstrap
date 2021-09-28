@@ -19,12 +19,21 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(PNGFILES:.png=.o) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
-.PHONY: checkarm7 checkarm9 bootloader bootstub
+.PHONY: checkarm7 checkarm9 bootloader bootstub dist
 
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT menu.xx
+all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx
+
+dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx
+	mkdir -p bootstrap
+	cp -r _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
+	mkdir -p bootstrap/M3DSR/SYSTEM
+	cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
+	cp menu.xx bootstrap/M3DSR/SYSTEM
+	cd bootstrap && zip -r bootstrap.zip *
+	mv bootstrap/bootstrap.zip $(TOPDIR)
 
 _DS_MENU.DAT	:	$(TARGET).nds DLDI/r4tfv2.dldi
 	@dlditool DLDI/r4tfv2.dldi $<
@@ -55,8 +64,8 @@ ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-R4iDSN/_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4idsn_sd.dldi
-	@[ -d R4iDSN ] || mkdir -p R4iDSN
+r4ids.cn/_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4idsn_sd.dldi
+	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
 	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 	@dlditool DLDI/r4idsn_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
@@ -86,9 +95,9 @@ menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
 #	@dlditool DLDI/r4ultra.dldi $@
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET).arm9_r4idsn.elf
+$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET).arm9_r4ids.cn.elf
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4idsn.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
 
 data:
 	@mkdir -p $@
@@ -107,15 +116,16 @@ $(TARGET).arm7.elf:
 $(TARGET).arm9.elf: bootloader bootstub
 	$(MAKE) -C arm9
 
-$(TARGET).arm9_r4idsn.elf: bootloader bootstub
-	$(MAKE) -C arm9_r4idsn
+$(TARGET).arm9_r4ids.cn.elf: bootloader bootstub
+	$(MAKE) -C arm9_r4ids.cn
 
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
+	$(MAKE) -C arm9_r4ids.cn clean
 	$(MAKE) -C arm7 clean
 	$(MAKE) -C bootloader clean
 	$(MAKE) -C bootstub clean
-	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway ismat.dat _DS_MENU_ULTRA.DAT menu.xx
-	rm -rf data
+	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT menu.xx
+	rm -rf data bootstrap bootstrap.zip
 
