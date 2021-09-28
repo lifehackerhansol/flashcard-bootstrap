@@ -54,11 +54,17 @@ ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@[ -d ACEP ] || mkdir -p ACEP
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
 	@r4denc --key 0x4002 $< $@
-	
+
+R4iDSN/_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4idsn_sd.dldi
+	@[ -d R4iDSN ] || mkdir -p R4iDSN
+	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	@dlditool DLDI/r4idsn_sd.dldi $<
+	@r4denc --key 0x4002 $< $@
+
 R4iLS/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@[ -d R4iLS ] || mkdir -p R4iLS
 	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	@dlditool DLDI/EX4DS_R4iLS.dldi $@
+	@dlditool DLDI/EX4DS_R4iLS.dldi R4iLS/_DSMENU.nds
 	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
 	@rm -rf R4iLS/_DSMENU.nds
 	
@@ -72,7 +78,7 @@ Gateway/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
 	@cp $< BOOTSTRAP_M3.nds
 	@dlditool DLDI/M3DSReal.dldi BOOTSTRAP_M3.nds
-	@./tools/dsbize BOOTSTRAP_M3.nds $@ 0x12
+	@./tools/dsbize/dsbize BOOTSTRAP_M3.nds $@ 0x12
 	@rm BOOTSTRAP_M3.nds
 
 # _DS_MENU_ULTRA.DAT	:	$(TARGET).nds r4ultra.dldi
@@ -80,8 +86,9 @@ menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
 #	@dlditool DLDI/r4ultra.dldi $@
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf
+$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET).arm9_r4idsn.elf
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4idsn.arm9.elf
 
 data:
 	@mkdir -p $@
@@ -99,6 +106,9 @@ $(TARGET).arm7.elf:
 #---------------------------------------------------------------------------------
 $(TARGET).arm9.elf: bootloader bootstub
 	$(MAKE) -C arm9
+
+$(TARGET).arm9_r4idsn.elf: bootloader bootstub
+	$(MAKE) -C arm9_r4idsn
 
 #---------------------------------------------------------------------------------
 clean:
