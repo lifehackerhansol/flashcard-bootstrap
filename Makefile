@@ -28,7 +28,7 @@ all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOO
 
 dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx
 	mkdir -p bootstrap
-	cp -r _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
+	cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
 	mkdir -p bootstrap/M3DSR/SYSTEM
 	cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
 	cp menu.xx bootstrap/M3DSR/SYSTEM
