@@ -20,3 +20,4 @@ bootloader/load.elf
 !resource/*
 !resource/M3DSR/*
 !alternate_loaders/*/*
+tools/dsbize/dsbize
