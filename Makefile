@@ -35,63 +35,59 @@ dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BO
 	@cd bootstrap && zip -r bootstrap.zip *
 	@mv bootstrap/bootstrap.zip $(TOPDIR)
 
-_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4tfv2.dldi
-	@dlditool DLDI/r4tfv2.dldi $<
+_DS_MENU.DAT	:	$(TARGET).nds
+	@dlditool "DLDI/R4TF_DLDI_v2_recompiled_(TY).dldi" $<
 	@r4denc $< $@
 
-ez5sys.bin	:	$(TARGET).nds DLDI/EZ5V2.dldi
+ez5sys.bin	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/EZ5V2.dldi $@
 
-akmenu4.nds	:	$(TARGET).nds  DLDI/ak2_sd.dldi
+akmenu4.nds	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-TTMENU.DAT	:	$(TARGET).nds  DLDI/DSTTDLDIboyakkeyver.dldi
+TTMENU.DAT	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
 
-_BOOT_MP.NDS	:	$(TARGET).nds DLDI/mpcf.dldi
+_BOOT_MP.NDS	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/mpcf.dldi $@
 
-ismat.dat	:	$(TARGET).nds DLDI/mati.dldi
+ismat.dat	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/mati.dldi $@
 
-ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+ACEP/_DS_MENU.DAT	:	$(TARGET).nds
 	@[ -d ACEP ] || mkdir -p ACEP
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-r4ids.cn/_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4idsn_sd.dldi
+r4ids.cn/_DS_MENU.DAT	:	$(TARGET).nds
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
 	@cp $(TARGET)_r4ids.cn.nds $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
-R4iLS/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+R4iLS/_DSMENU.DAT	:	$(TARGET).nds
 	@[ -d R4iLS ] || mkdir -p R4iLS
 	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 	@dlditool DLDI/EX4DS_R4iLS.dldi R4iLS/_DSMENU.nds
 	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
 	@rm -rf R4iLS/_DSMENU.nds
 	
-Gateway/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
+Gateway/_DSMENU.DAT	:	$(TARGET).nds
 	@[ -d Gateway ] || mkdir -p Gateway
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
 	@ndstool -h 0x200 -g "XXXX" "XX" "R4IT" -c Gateway/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
 	@rm Gateway/_DSMENU.nds
 	
-menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
+menu.xx	:	$(TARGET).nds
 	@cp $< BOOTSTRAP_M3.nds
-	@dlditool DLDI/M3DSReal.dldi BOOTSTRAP_M3.nds
+	@dlditool "DLDI/M3-DS_(SD_Card).dldi" BOOTSTRAP_M3.nds
 	@./tools/dsbize/dsbize BOOTSTRAP_M3.nds $@ 0x12
 	@rm BOOTSTRAP_M3.nds
-
-R4Ultra/_DS_MENU.DAT	:	$(TARGET).nds r4ultra.dldi
-	@cp $< $@
-	@dlditool DLDI/r4ultra.dldi $@
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET).arm9_r4ids.cn.elf
