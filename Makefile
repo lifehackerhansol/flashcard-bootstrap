@@ -27,13 +27,13 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx
 
 dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx
-	mkdir -p bootstrap
-	cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
-	mkdir -p bootstrap/M3DSR/SYSTEM
-	cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
-	cp menu.xx bootstrap/M3DSR/SYSTEM
-	cd bootstrap && zip -r bootstrap.zip *
-	mv bootstrap/bootstrap.zip $(TOPDIR)
+	@mkdir -p bootstrap
+	@cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
+	@mkdir -p bootstrap/M3DSR/SYSTEM
+	@cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
+	@cp menu.xx bootstrap/M3DSR/SYSTEM
+	@cd bootstrap && zip -r bootstrap.zip *
+	@mv bootstrap/bootstrap.zip $(TOPDIR)
 
 _DS_MENU.DAT	:	$(TARGET).nds DLDI/r4tfv2.dldi
 	@dlditool DLDI/r4tfv2.dldi $<
@@ -66,9 +66,8 @@ ACEP/_DS_MENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 
 r4ids.cn/_DS_MENU.DAT	:	$(TARGET).nds DLDI/r4idsn_sd.dldi
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
-	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	@dlditool DLDI/r4idsn_sd.dldi $<
-	@r4denc --key 0x4002 $< $@
+	@cp $(TARGET)_r4ids.cn.nds $@
+	@dlditool DLDI/r4idsn_sd.dldi $@
 
 R4iLS/_DSMENU.DAT	:	$(TARGET).nds DLDI/EX4DS_R4iLS.dldi
 	@[ -d R4iLS ] || mkdir -p R4iLS
@@ -90,14 +89,14 @@ menu.xx	:	$(TARGET).nds DLDI/M3DSReal.dldi
 	@./tools/dsbize/dsbize BOOTSTRAP_M3.nds $@ 0x12
 	@rm BOOTSTRAP_M3.nds
 
-# _DS_MENU_ULTRA.DAT	:	$(TARGET).nds r4ultra.dldi
-#	@cp $< $@
-#	@dlditool DLDI/r4ultra.dldi $@
+R4Ultra/_DS_MENU.DAT	:	$(TARGET).nds r4ultra.dldi
+	@cp $< $@
+	@dlditool DLDI/r4ultra.dldi $@
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET).arm9_r4ids.cn.elf
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
 
 data:
 	@mkdir -p $@
