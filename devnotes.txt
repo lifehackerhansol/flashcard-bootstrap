@@ -1,0 +1,32 @@
+flashcarts that can be directly built:
+
+- All DSTT-based clones
+- GBA Movie Player (Compact Flash)
+- iSmart Premium
+- EZ-Flash V (SDHC is not tested. Some outdated sources suggest that EZV SDHC does not have SD card init, and thus cannot be booted from DLDI alone.)
+- Original R4
+
+flashcarts that require a specialized tool
+- M3DS Real
+    - a tool by Rudolph named dsbize is required. dsbize source is in /tools. Compile it for PC then run `dsbize <rom name here> menu.xx 0x12`
+
+flashcarts that have some protection built in
+- Ace3DS+
+    - encrypt using r4denc with 0x4002
+    - must use regular ds_arm9.ld and ds_arm7.ld to build (default one used in most DS projects)
+- R4 i.L.S., all r4isdhc.com.cn carts, r4isdhc.hk carts dated 2020 or newer
+    - build with ndstool with args `-g "XX" "XX" "R4XX"
+    - encrypt using r4denc with 0x4002
+    - must use regular ds_arm9.ld and ds_arm7.ld (default one used in most DS projects)
+- Gateway Blue (possibly R4infinity 2?)
+    - build with ndstool with args `-g "XX" "XX" "R4IT"
+    - encrypt using r4denc with 0x4002
+    - must use regular ds_arm9.ld and ds_arm7.ld (default one used in most DS projects)
+- all r4ids.cn carts
+    - EWRAM entry (e9 entry address) must be 0x02000800
+- R4 Ultra and R4i Ultra
+    - EWRAM entry (e9 entry address) must be 0x02000800
+
+flashcarts that can be directly built but also needs more info
+- Acekard 2, 2.1, 2i
+    - some funky entry address. For some reason breaks in TWiLight Menu++ but works here.
