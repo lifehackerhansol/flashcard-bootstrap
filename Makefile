@@ -113,6 +113,7 @@ $(TARGET).arm9.elf: bootloader bootstub
 
 $(TARGET).arm9_r4ids.cn.elf: bootloader bootstub
 	$(MAKE) -C arm9_r4ids.cn
+	cp arm9_r4ids.cn/booter.elf booter_r4ids.cn.arm9.elf
 
 #---------------------------------------------------------------------------------
 clean:
