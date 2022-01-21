@@ -11,6 +11,7 @@ export TARGET		:=	booter
 export TOPDIR		:=	$(CURDIR)
 export DATA			:=	data
 
+export LIBANDS		:=	$(TOPDIR)/libands
 
 BINFILES	:=	load.bin
 
@@ -19,7 +20,7 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(PNGFILES:.png=.o) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
-.PHONY: checkarm7 checkarm9 bootloader bootstub dist
+.PHONY: checkarm7 checkarm9 bootloader bootstub dist libands
 
 #---------------------------------------------------------------------------------
 # main targets
@@ -92,11 +93,11 @@ menu.xx	:	$(TARGET).nds
 MAZE/_DS_MENU.DAT: $(TARGET).nds
 	@[ -d MAZE ] || mkdir -p MAZE
 	@mv $(TARGET)_r4igold.cc_wood.nds $@
-	@dlditool DLDI/r4igold.cc_wood.dldi $@
+	@dlditool DLDI/r4idsn_sd.dldi $@
 	
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
+$(TARGET).nds	:	libands $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
 	ndstool	-h 0x200 -c $(TARGET)_r4igold.cc_wood.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf
@@ -126,6 +127,9 @@ $(TARGET)_r4igold.cc_wood.arm9.elf: bootloader bootstub
 	$(MAKE) -C arm9_r4igold.cc_wood
 	cp arm9_r4igold.cc_wood/booter.elf $(TARGET)_r4igold.cc_wood.arm9.elf
 
+libands:
+	$(MAKE) -C libands
+
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
@@ -134,6 +138,7 @@ clean:
 	$(MAKE) -C arm7 clean
 	$(MAKE) -C bootloader clean
 	$(MAKE) -C bootstub clean
+	$(MAKE) -C libands clean
 	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
 	rm -rf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT menu.xx MAZE 
 	rm -rf data bootstrap bootstrap.zip
