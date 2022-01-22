@@ -19,19 +19,32 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <fat.h>
 
 #include <stdio.h>
 
 #include "nds_loader_arm9.h"
 
-int main( int argc, char **argv) {
+int fail(char* error){
 	consoleDemoInit();
-	iprintf("hbmenu bootstrap ...\n");
-	if (fatInitDefault()) {
-		runNdsFile("/BOOT.NDS", 0, NULL);
-	} else {
-		iprintf("FAT init failed!\n");
+	iprintf("Bootstrap fail:\n");
+	iprintf("%s\n\n", error);
+	iprintf("Press START to power off.");
+	while(1) {
+		swiWaitForVBlank();
+		scanKeys();
+		int pressed = keysDown();
+		if(pressed & KEY_START) break;
 	}
-	while(1) swiWaitForVBlank();
+	return 0;
+}
+
+int main(void) {
+	if (!fatInitDefault()) return fail("FAT init failed!\n");
+	if(io_dldi_data->driverSize > 0xE) return fail("DLDI driver too large.\nPlease update your kernel.");
+	int err = runNdsFile("/BOOT.nds", 0, NULL);
+	char* message = "Error code: ";
+	sprintf(message, message, err);
+	return fail(message);
 }
