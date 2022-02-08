@@ -44,7 +44,7 @@ int main(void) {
 	if (!fatInitDefault()) return fail("FAT init failed!\n");
 	if(io_dldi_data->driverSize > 0xE) return fail("DLDI driver too large.\nPlease update your kernel.");
 	int err = runNdsFile("/BOOT.nds", 0, NULL);
-	char* message = "Error code: ";
-	sprintf(message, message, err);
+	char message[128];
+	sprintf(message, "Error code: %d", err);
 	return fail(message);
 }
