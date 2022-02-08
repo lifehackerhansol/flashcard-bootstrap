@@ -13,6 +13,7 @@ Currently available flashcarts:
 - R4iLS, r4isdhc.com.cn, r4isdhc.hk (in R4iLS folder)
 - r4ids.cn carts, R4 Ultra (R4iDSN folder)
 - M3 DS Real, M3i Zero (non-GMP-Z003) (in M3DSR folder)
+- iTouchDS, iTouch2 and R4(i)RTS (r4rts.com) (in iTDS_R4RTS folder)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 

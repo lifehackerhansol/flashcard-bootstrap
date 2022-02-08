@@ -10,6 +10,10 @@ flashcarts that require a specialized tool
 - M3DS Real
     - a tool by Rudolph named dsbize is required. dsbize source is in /tools. Compile it for PC then run `dsbize <rom name here> menu.xx 0x12`
 
+flashcarts that require extra files
+- R4RTS, iTouchDS, iTouch2
+    - needs `loader.eng` or `boot.eng`, this launches /_system_/_sys_data/r4i.sys which is just a normal NDS file
+
 flashcarts that have some protection built in
 - Ace3DS+
     - encrypt using r4denc with 0x4002

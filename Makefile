@@ -28,11 +28,14 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx MAZE/_DS_MENU.DAT
 
 dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx MAZE/_DS_MENU.DAT
-	@mkdir -p bootstrap
-	@cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
 	@mkdir -p bootstrap/M3DSR/SYSTEM
+	@mkdir -p bootstrap/iTDS_R4RTS/_system_/_sys_data
+	@cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
 	@cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
+	@cp -r resource/iTDS_R4RTS/* bootstrap/iTDS_R4RTS/
+	@cp R4i.sys bootstrap/iTDS_R4RTS/_system_/_sys_data/R4i.sys
 	@cp menu.xx bootstrap/M3DSR/SYSTEM
+	
 	@cd bootstrap && zip -r bootstrap.zip *
 	@mv bootstrap/bootstrap.zip $(TOPDIR)
 
@@ -85,10 +88,9 @@ Gateway/_DSMENU.DAT	:	$(TARGET).nds
 	@rm Gateway/_DSMENU.nds
 	
 menu.xx	:	$(TARGET).nds
-	@cp $< BOOTSTRAP_M3.nds
-	@dlditool "DLDI/M3-DS_(SD_Card).dldi" BOOTSTRAP_M3.nds
-	@./tools/dsbize/dsbize BOOTSTRAP_M3.nds $@ 0x12
-	@rm BOOTSTRAP_M3.nds
+	@cp $< R4i.sys
+	@dlditool "DLDI/M3-DS_(SD_Card).dldi" R4i.sys
+	@./tools/dsbize/dsbize R4i.sys $@ 0x12
 
 MAZE/_DS_MENU.DAT: $(TARGET).nds
 	@[ -d MAZE ] || mkdir -p MAZE
@@ -140,6 +142,6 @@ clean:
 	$(MAKE) -C bootstub clean
 	$(MAKE) -C libands clean
 	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
-	rm -rf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT menu.xx MAZE 
+	rm -rf _DS_MENU.DAT R4i.sys ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT menu.xx MAZE 
 	rm -rf data bootstrap bootstrap.zip
 

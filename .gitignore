@@ -8,6 +8,7 @@
 *.xx
 *.SC
 *.a
+*.sys
 bootstrap
 data
 build
@@ -19,6 +20,7 @@ bootloader/*build
 bootloader/load.bin
 bootloader/load.elf
 !resource/*
+!resource/iTDS_R4RTS/*
 !resource/M3DSR/*
 !alternate_loaders/*/*
 tools/dsbize/dsbize
