@@ -7,7 +7,7 @@
 *.zip
 *.xx
 *.SC
-lib
+*.a
 bootstrap
 data
 build
