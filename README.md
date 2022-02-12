@@ -9,11 +9,10 @@ Currently available flashcarts:
 - EZ Flash V (ez5sys.bin)
 - Original R4 (_DS_MENU.dat)
 - Acekard 2, 2.1, 2i (akmenu4.nds)
+- r4ids.cn carts, R4 Ultra (in r4ids.cn folder)
 - Ace3DS+ (in ACEP folder)
 - R4iLS, r4isdhc.com.cn, r4isdhc.hk (in R4iLS folder)
-- r4ids.cn carts, R4 Ultra (R4iDSN folder)
-- M3 DS Real, M3i Zero (non-GMP-Z003) (in M3DSR folder)
-- iTouchDS, iTouch2 and R4(i)RTS (r4rts.com) (in iTDS_R4RTS folder)
+- M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, iTouch2, R4(i)RTS (r4rts.com), R4 SDHC RTS black (in M3R_iTDS_R4RTS folder)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 
