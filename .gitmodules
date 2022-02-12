@@ -1,3 +1,6 @@
 [submodule "bootloader"]
 	path = bootloader
 	url = https://github.com/devkitPro/nds-bootloader
+[submodule "DLDI"]
+	path = DLDI
+	url = https://github.com/DS-Homebrew/DLDI
