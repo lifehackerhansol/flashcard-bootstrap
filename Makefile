@@ -53,6 +53,10 @@ _BOOT_MP.NDS	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/mpcf.dldi $@
 
+r4i.sys	:	$(TARGET).nds
+	@cp $< $@
+	@dlditool "DLDI/M3-DS_(SD_Card).dldi" $@
+
 ismat.dat	:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/mati.dldi $@
@@ -81,10 +85,6 @@ Gateway/_DSMENU.DAT	:	$(TARGET).nds
 	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
 	@rm Gateway/_DSMENU.nds
 
-r4i.sys	:	$(TARGET).nds
-	@cp $< R4i.sys
-	@dlditool "DLDI/M3-DS_(SD_Card).dldi" R4i.sys
-
 MAZE/_DS_MENU.DAT: $(TARGET).nds
 	@[ -d MAZE ] || mkdir -p MAZE
 	@mv $(TARGET)_r4igold.cc_wood.nds $@
@@ -102,9 +102,6 @@ data:
 
 bootloader: data
 	@$(MAKE) -C bootloader LOADBIN=$(CURDIR)/data/load.bin
-
-bootstub: data
-	@$(MAKE) -C bootstub
 
 #---------------------------------------------------------------------------------
 $(TARGET).arm7.elf:
@@ -129,8 +126,7 @@ clean:
 	$(MAKE) -C arm9_r4igold.cc_wood clean
 	$(MAKE) -C arm7 clean
 	$(MAKE) -C bootloader clean
-	$(MAKE) -C bootstub clean
 	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
-	rm -rf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT r4i.sys MAZE 
+	rm -rf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ismat.dat r4i.sys ACEP R4iLS Gateway r4ids.cn MAZE 
 	rm -rf data bootstrap bootstrap.zip
 

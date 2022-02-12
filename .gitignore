@@ -5,9 +5,6 @@
 *.elf
 *.bin
 *.zip
-*.xx
-*.SC
-*.a
 *.sys
 bootstrap
 data
