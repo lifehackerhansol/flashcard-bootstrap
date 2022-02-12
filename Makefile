@@ -93,9 +93,9 @@ MAZE/_DS_MENU.DAT:	$(TARGET).nds
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
-	ndstool	-h 0x200 -c $(TARGET).nds 					-7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds 			-7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
-	ndstool	-h 0x200 -c $(TARGET)_MAZE.nds 	-7 $(TARGET).arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET).nds 			-7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds 	-7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET)_MAZE.nds 		-7 $(TARGET).arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf
 
 data:
 	@mkdir -p $@

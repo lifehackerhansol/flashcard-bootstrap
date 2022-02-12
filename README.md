@@ -2,7 +2,7 @@
 
 This repository aims to have an easy replacement for your flashcart kernel to automatically boot any homebrew of your choice. 
 
-This will simply launch `BOOT.NDS` on the root of the SD card.
+This will simply launch `BOOT.NDS` homebrew on the root of the SD card.
 
 Currently available flashcarts:
 - DSTT (TTMenu.dat)

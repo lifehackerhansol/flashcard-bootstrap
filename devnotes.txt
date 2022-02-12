@@ -6,14 +6,6 @@ flashcarts that can be directly built:
 - EZ-Flash V (SDHC is not tested. Some outdated sources suggest that EZV SDHC does not have SD card init, and thus cannot be booted from DLDI alone.)
 - Original R4
 
-flashcarts that require a specialized tool
-- M3DS Real
-    - a tool by Rudolph named dsbize is required. dsbize source is in /tools. Compile it for PC then run `dsbize <rom name here> menu.xx 0x12`
-
-flashcarts that require extra files
-- R4RTS, iTouchDS, iTouch2
-    - needs `loader.eng` or `boot.eng`, this launches /_system_/_sys_data/r4i.sys which is just a normal NDS file
-
 flashcarts that have some protection built in
 - Ace3DS+
     - encrypt using r4denc with 0x4002
@@ -26,11 +18,40 @@ flashcarts that have some protection built in
     - build with ndstool with args `-g "XX" "XX" "R4IT"
     - encrypt using r4denc with 0x4002
     - must use regular ds_arm9.ld and ds_arm7.ld (default one used in most DS projects)
-- all r4ids.cn carts
-    - EWRAM entry (e9 entry address) must be 0x02000800
-- R4 Ultra and R4i Ultra
-    - EWRAM entry (e9 entry address) must be 0x02000800
+- R4i-SDHC, r4isdhc.com 2014+ carts
+    - has a hash checking watermark at every 0x200 bytes
+    - problem is fincs's code is broken and doesn't seem to compile on any devkitARM version
+        - so for now just have R4.dat from alternate_loaders and 'cp TTMenu.dat _boot_ds.nds`
 
-flashcarts that can be directly built but also needs more info
+flashcarts with a particular load address:
+- all r4ids.cn carts, R4 Ultra and R4i Ultra
+    - EWRAM entry (e9 entry address) must be 0x02000800
+    - For some reason if you try to change this by setting CRT0 address in LDFLAGS this doesn't work. So a specs file is provided.
 - Acekard 2, 2.1, 2i
-    - some funky entry address. For some reason breaks in TWiLight Menu++ but works here.
+    - EWRAM entry (e9 entry address) must be 0x02000450
+- Wood r4igold.cc upgrade
+    - Appears to be related to the Galaxy Eagle line?
+    - EWRAM entry (e9 entry address) must be 0x02000000
+
+flashcarts that require extra files
+- M3 DS Real, R4RTS, iTouchDS, iTouch2, R4 SDHC RTS black
+    - Any of these will launch /_system_/_sys_data/r4i.sys which is just a normal NDS file
+    - all boot files are derived from the R4RTS loader, with different encryption keys
+    - All thanks goes to Taiju Yamada, Rudolph and NDS Laboratory for tools and/or tips on getting this correct
+    - R4RTS:
+        - launches 'loader.eng', which launches /_system_/_sys_data/r4i.sys
+    - R4 SDHC RTS black
+        - launches /_DS_MENU.sys.
+        - otherwise identical to R4RTS. No effort was put in here. Thanks r4isdhc.com team
+    - M3 DS Real:
+        - checks /SYSTEM/g6dsload.1, and launches /SYSTEM/g6dsloader.eng. 
+        - g6dsload.1 is a very specific stub for now, not sure what its use is but it needs to be there, so for now I just used whatever the converter spewed out
+    - iTouchDS, iTouch2
+        - launches `boot.*` depending on region of cart. No easy way to identify, but they are all different encryption keys.
+        - just check which one it is manually, it's 3 files anyway
+
+random notes:
+- MSHL2 writes 32KB of data, regardless of what your DLDI size is. This breaks a bunch of homebrew. You need to recompile libnds with 32KB DLDI size to fix.
+- For some reason if you try to directly create the DSONE SDHC bootloader you don't get access to entire hardware. This breaks YSMenu.
+    - thus, use the alternate loader, then copy something DSTT related to it, works.
+    - I should try to get in contact with bliss...
