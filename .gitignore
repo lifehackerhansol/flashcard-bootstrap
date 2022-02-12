@@ -20,7 +20,5 @@ bootloader/*build
 bootloader/load.bin
 bootloader/load.elf
 !resource/*
-!resource/iTDS_R4RTS/*
-!resource/M3DSR/*
+!resource/M3R_iTDS_R4RTS/*
 !alternate_loaders/*/*
-tools/dsbize/dsbize

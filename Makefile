@@ -11,10 +11,7 @@ export TARGET		:=	booter
 export TOPDIR		:=	$(CURDIR)
 export DATA			:=	data
 
-export LIBANDS		:=	$(TOPDIR)/libands
-
 BINFILES	:=	load.bin
-
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(PNGFILES:.png=.o) \
@@ -25,16 +22,13 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx MAZE/_DS_MENU.DAT
+all: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT r4i.sys MAZE/_DS_MENU.DAT
 
-dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT menu.xx MAZE/_DS_MENU.DAT
-	@mkdir -p bootstrap/M3DSR/SYSTEM
-	@mkdir -p bootstrap/iTDS_R4RTS/_system_/_sys_data
+dist: $(TARGET).nds _DS_MENU.DAT ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP/_DS_MENU.DAT R4iLS/_DSMENU.DAT Gateway/_DSMENU.DAT r4ids.cn/_DS_MENU.DAT r4i.sys MAZE/_DS_MENU.DAT
+	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@cp -r _DS_MENU.dat ismat.dat ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn bootstrap
-	@cp -r resource/M3DSR/* bootstrap/M3DSR/SYSTEM/
-	@cp -r resource/iTDS_R4RTS/* bootstrap/iTDS_R4RTS/
-	@cp R4i.sys bootstrap/iTDS_R4RTS/_system_/_sys_data/R4i.sys
-	@cp menu.xx bootstrap/M3DSR/SYSTEM
+	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
+	@cp R4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/R4i.sys
 	
 	@cd bootstrap && zip -r bootstrap.zip *
 	@mv bootstrap/bootstrap.zip $(TOPDIR)
@@ -79,30 +73,29 @@ R4iLS/_DSMENU.DAT	:	$(TARGET).nds
 	@dlditool DLDI/EX4DS_R4iLS.dldi R4iLS/_DSMENU.nds
 	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
 	@rm -rf R4iLS/_DSMENU.nds
-	
+
 Gateway/_DSMENU.DAT	:	$(TARGET).nds
 	@[ -d Gateway ] || mkdir -p Gateway
 	@dlditool DLDI/EX4DS_R4iLS.dldi $<
 	@ndstool -h 0x200 -g "XXXX" "XX" "R4IT" -c Gateway/_DSMENU.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
 	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
 	@rm Gateway/_DSMENU.nds
-	
-menu.xx	:	$(TARGET).nds
+
+r4i.sys	:	$(TARGET).nds
 	@cp $< R4i.sys
 	@dlditool "DLDI/M3-DS_(SD_Card).dldi" R4i.sys
-	@./tools/dsbize/dsbize R4i.sys $@ 0x12
 
 MAZE/_DS_MENU.DAT: $(TARGET).nds
 	@[ -d MAZE ] || mkdir -p MAZE
 	@mv $(TARGET)_r4igold.cc_wood.nds $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
-	
+
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	:	libands $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
-	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
-	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
-	ndstool	-h 0x200 -c $(TARGET)_r4igold.cc_wood.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf
+$(TARGET).nds	:	$(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET).nds 					-7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf
+	ndstool	-h 0x200 -c $(TARGET)_r4ids.cn.nds 			-7 $(TARGET).arm7.elf -9 $(TARGET)_r4ids.cn.arm9.elf
+	ndstool	-h 0x200 -c $(TARGET)_r4igold.cc_wood.nds 	-7 $(TARGET).arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf
 
 data:
 	@mkdir -p $@
@@ -129,9 +122,6 @@ $(TARGET)_r4igold.cc_wood.arm9.elf: bootloader bootstub
 	$(MAKE) -C arm9_r4igold.cc_wood
 	cp arm9_r4igold.cc_wood/booter.elf $(TARGET)_r4igold.cc_wood.arm9.elf
 
-libands:
-	$(MAKE) -C libands
-
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
@@ -140,8 +130,7 @@ clean:
 	$(MAKE) -C arm7 clean
 	$(MAKE) -C bootloader clean
 	$(MAKE) -C bootstub clean
-	$(MAKE) -C libands clean
 	rm -rf $(TARGET).nds $(TARGET).arm7.elf $(TARGET).arm9.elf $(TARGET)_r4ids.cn.arm9.elf $(TARGET)_r4igold.cc_wood.arm9.elf
-	rm -rf _DS_MENU.DAT R4i.sys ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT menu.xx MAZE 
+	rm -rf _DS_MENU.DAT ez5sys.bin akmenu4.nds TTMENU.DAT _BOOT_MP.NDS ACEP R4iLS Gateway r4ids.cn ismat.dat _DS_MENU_ULTRA.DAT r4i.sys MAZE 
 	rm -rf data bootstrap bootstrap.zip
 
