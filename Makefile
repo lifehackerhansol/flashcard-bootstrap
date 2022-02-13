@@ -26,7 +26,7 @@ all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ism
 
 dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat akmenu4.nds ACEP/_ds_menu.dat r4ids.cn/_ds_menu.dat MAZE/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
-	@cp -r _ds_menu.dat ismat.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ACEP R4iLS Gateway r4ids.cn bootstrap
+	@cp -r _ds_menu.dat ismat.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ACEP R4iLS Gateway r4ids.cn README.md bootstrap
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
 	
