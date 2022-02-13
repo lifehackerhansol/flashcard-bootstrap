@@ -1,5 +1,7 @@
 # Flashcard Bootstrap
 
+https://github.com/lifehackerhansol/flashcard-bootstrap
+
 This repository aims to have an easy replacement for your flashcart kernel to automatically boot any homebrew of your choice. 
 
 This will simply launch `BOOT.NDS` homebrew on the root of the SD card.
@@ -19,10 +21,9 @@ Copy the appropriate files to root, and then add any homebrew of your choice to 
 # License
 
 ```
- Copyright (C) 2005 - 2017
+ Copyright (C) 2005 - 2010
 	Michael "Chishm" Chisholm
 	Dave "WinterMute" Murphy
-	Claudio "sverx"
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
