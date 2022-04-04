@@ -7,14 +7,17 @@ This repository aims to have an easy replacement for your flashcart kernel to au
 This will simply launch `BOOT.NDS` homebrew on the root of the SD card.
 
 Currently available flashcarts:
-- DSTT (TTMenu.dat)
+- DSTT (ttmenu.dat)
 - EZ Flash V (ez5sys.bin)
-- Original R4 (_DS_MENU.dat)
+- Original R4 (_ds_menu.dat)
+- R4iDSN (_dsmenu.dat)
 - Acekard 2, 2.1, 2i (akmenu4.nds)
 - r4ids.cn carts, R4 Ultra (in r4ids.cn folder)
 - Ace3DS+ (in ACEP folder)
 - R4iLS, r4isdhc.com.cn, r4isdhc.hk (in R4iLS folder)
+- Gateway Blue (in Gateway folder)
 - M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, iTouch2, R4(i)RTS (r4rts.com), R4 SDHC RTS black (in M3R_iTDS_R4RTS folder)
+- DSOne SDHC, DSOnei (in DSOneSDHC_DSOnei folder)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 
