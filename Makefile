@@ -81,14 +81,14 @@ MAZE/_ds_menu.dat:	$(TARGET)_MAZE.elf
 
 R4iLS/_dsmenu.dat:	$(TARGET).elf
 	@[ -d R4iLS ] || mkdir -p R4iLS
-	@ndstool -h 0x200 -g "XXXX" "XX" "R4XX" -c R4iLS/_DSMENU.nds -9 $<
+	@ndstool -h 0x200 -g "####" "##" "R4XX" -c R4iLS/_DSMENU.nds -9 $<
 	@dlditool DLDI/ace3ds_sd.dldi R4iLS/_DSMENU.nds
 	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
 	@rm -rf R4iLS/_DSMENU.nds
 
 Gateway/_dsmenu.dat:	$(TARGET).elf
 	@[ -d Gateway ] || mkdir -p Gateway
-	@ndstool -h 0x200 -g "XXXX" "XX" "R4IT" -c Gateway/_DSMENU.nds -9 $<
+	@ndstool -h 0x200 -g "####" "##" "R4IT" -c Gateway/_DSMENU.nds -9 $<
 	@dlditool DLDI/ace3ds_sd.dldi Gateway/_DSMENU.nds
 	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
 	@rm Gateway/_DSMENU.nds
