@@ -17,5 +17,5 @@ bootloader/*build
 bootloader/load.bin
 bootloader/load.elf
 !resource/*
-!resource/M3R_iTDS_R4RTS/*
+!resource/*/*
 !alternate_loaders/*/*

@@ -1,1 +1,0 @@
-This boots BOOT.NDS just like the other bootstraps built here.

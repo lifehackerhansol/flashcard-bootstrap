@@ -26,8 +26,11 @@ all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ism
 
 dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat akmenu4.nds ACEP/_ds_menu.dat r4ids.cn/_ds_menu.dat MAZE/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
+	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@cp -r _ds_menu.dat ismat.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ACEP R4iLS Gateway r4ids.cn README.md bootstrap
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
+	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
+	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
 	
 	@cd bootstrap && zip -r bootstrap.zip *
@@ -73,7 +76,7 @@ r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.elf
 
 MAZE/_ds_menu.dat:	$(TARGET)_MAZE.elf
 	@[ -d MAZE ] || mkdir -p MAZE
-	ndstool	-h 0x200 -c $@ -9 $<
+	@ndstool	-h 0x200 -c $@ -9 $<
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
 R4iLS/_dsmenu.dat:	$(TARGET).elf
