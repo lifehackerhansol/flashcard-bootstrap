@@ -9,13 +9,6 @@
 bootstrap
 data
 build
-hbload
-arm9/build
-arm7/build
-arm9_r4ids.cn/build
-bootloader/*build
-bootloader/load.bin
-bootloader/load.elf
 !resource/*
 !resource/*/*
 !alternate_loaders/*/*
