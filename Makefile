@@ -22,12 +22,12 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all		:	$(TARGET).nds _ds_menu.dat _dsmenu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat akmenu4.nds ACEP/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 
-dist	:	$(TARGET).nds _ds_menu.dat _dsmenu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat akmenu4.nds ACEP/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
-	@cp -r _ds_menu.dat ismat.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds _dsmenu.dat ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds ismat.dat R4iTT akmenu4.nds _dsmenu.dat ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
@@ -60,24 +60,29 @@ ismat.dat:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/Mat.dldi $@
 
-akmenu4.nds:	$(TARGET)_ak2.elf
-	@ndstool -h 0x200 -c $@ -9 $<
-	@dlditool DLDI/ak2_sd.dldi $@
+R4iTT/_ds_menu.dat:	$(TARGET).nds
+	@[ -d R4iTT ] || mkdir -p R4iTT
+	@cp $< $@
+	@dlditool DLDI/r4itt.dldi $@
 
 ACEP/_ds_menu.dat:	$(TARGET).nds
 	@[ -d ACEP ] || mkdir -p ACEP
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.elf
-	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
-	ndstool	-h 0x200 -c $@ -9 $<
-	@dlditool DLDI/r4idsn_sd_r4ig.dldi $@
+akmenu4.nds:	$(TARGET)_ak2.elf
+	@ndstool -h 0x200 -c $@ -9 $<
+	@dlditool DLDI/ak2_sd.dldi $@
 
 _dsmenu.dat:	$(TARGET)_r4idsn.elf
 	@[ -d R4iDSN ] || mkdir -p R4iDSN
 	@ndstool -h 0x200 -c $@ -9 $<
 	@dlditool DLDI/r4idsn_sd.dldi $@
+
+r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.elf
+	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
+	ndstool	-h 0x200 -c $@ -9 $<
+	@dlditool DLDI/r4idsn_sd_r4ig.dldi $@
 
 R4iLS/_dsmenu.dat:	$(TARGET).elf
 	@[ -d R4iLS ] || mkdir -p R4iLS
