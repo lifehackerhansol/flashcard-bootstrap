@@ -22,12 +22,12 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 
-dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat R4iTT/_ds_menu.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat _boot_mp.nds ismat.dat R4iTT akmenu4.nds _dsmenu.dat ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat R4iTT akmenu4.nds _dsmenu.dat ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
@@ -43,10 +43,6 @@ _ds_menu.dat:	$(TARGET).nds
 ez5sys.bin:	$(TARGET).nds
 	@cp $< $@
 	@dlditool DLDI/EZ5V2.dldi $@
-
-ttmenu.dat:	$(TARGET).nds
-	@cp $< $@
-	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
 
 _boot_mp.nds:	$(TARGET).nds
 	@cp $< $@
@@ -73,6 +69,16 @@ ACEP/_ds_menu.dat:	$(TARGET).nds
 akmenu4.nds:	$(TARGET)_ak2.elf
 	@ndstool -h 0x200 -c $@ -9 $<
 	@dlditool DLDI/ak2_sd.dldi $@
+
+ttmenu.dat:		akmenu4.nds
+	@cp $< $@
+	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
+
+r4.dat: 	ttmenu.dat
+	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	@./resource/r4isdhc/r4isdhc arm9.bin new9.bin
+	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
+	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
 _dsmenu.dat:	$(TARGET)_r4idsn.elf
 	@[ -d R4iDSN ] || mkdir -p R4iDSN

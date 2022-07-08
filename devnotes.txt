@@ -22,8 +22,8 @@ flashcarts that have some protection built in
     - must use regular ds_arm9.ld and ds_arm7.ld to build (default one used in most DS projects)
 - R4i-SDHC, r4isdhc.com 2014+ carts
     - has a hash checking watermark at every 0x200 bytes
-    - problem is fincs's code is broken and doesn't seem to compile on any devkitARM version
-        - so for now just have R4.dat from alternate_loaders and 'cp TTMenu.dat _boot_ds.nds`
+    - Taiju Yamada has an arm9 patcher for this. EWRAM entry (e9 entry address) must be 0x02000450 for this patcher
+    - Extract compiled arm9, patch arm9, rebuild NDS with ndstool and set RAM address (r9 address) to 0x02000000
 
 flashcarts with a particular load address:
 - all r4ids.cn carts, R4 Ultra and R4i Ultra

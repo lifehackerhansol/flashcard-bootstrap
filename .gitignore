@@ -11,4 +11,4 @@ data
 build
 !resource/*
 !resource/*/*
-!alternate_loaders/*/*
+resource/r4isdhc/r4isdhc
