@@ -2,6 +2,7 @@ flashcarts that can be directly built:
 
 - All DSTT-based clones
 - All R4iTT 3DS based clones
+    - in flashcard-bootstrap, we use r4ids.cn BL, since DLDI is the same, and R4iTT has no restructions. We don't need more than one :D
 - GBA Movie Player (Compact Flash) (NDS MP flashed)
 - iSmart Premium
 - EZ-Flash V (SDHC is not tested. Some outdated sources suggest that EZV SDHC does not have SD card init, and thus cannot be booted from DLDI alone.)
