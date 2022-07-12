@@ -24,7 +24,7 @@ int fail(char* error){
 int main(void) {
 	if (!fatInitDefault()) return fail("FAT init failed!\n");
 	int err = runNdsFile("/BOOT.nds", 0, NULL);
-	char message[128];
+	char message[20];
 	sprintf(message, "Error code: %d", err);
 	return fail(message);
 }
