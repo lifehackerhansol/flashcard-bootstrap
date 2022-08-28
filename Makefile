@@ -44,7 +44,7 @@ _ds_menu.dat:	$(TARGET).nds
 ez5sys.bin:	$(TARGET).nds
 	@echo "Make EZ-Flash V"
 	@cp $< $@
-	@dlditool DLDI/EZ5V2.dldi $@
+	@dlditool DLDI/ez5h.dldi $@
 
 _boot_mp.nds:	$(TARGET).nds
 	@echo "Make GBAMP"
@@ -54,7 +54,7 @@ _boot_mp.nds:	$(TARGET).nds
 r4i.sys	:	$(TARGET).nds
 	@echo "Make M3R_iTDS_R4RTS"
 	@cp $< $@
-	@dlditool "DLDI/M3-DS_(SD_Card).dldi" $@
+	@dlditool "DLDI/m3r4_m3ds.dldi" $@
 
 ismat.dat:	$(TARGET).nds
 	@echo "Make iSmart Premium"
