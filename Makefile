@@ -22,12 +22,12 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 
-dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
@@ -90,6 +90,12 @@ _dsmenu.dat:	$(TARGET)_r4idsn.elf
 	@ndstool -h 0x200 -c $@ -9 $<
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
+MAZE/_ds_menu.dat:	_dsmenu.dat
+	@echo "Make Amaze3DS/R4igold.cc Wood"
+	@[ -d MAZE ] || mkdir -p MAZE
+	@cp $< $@
+	@dlditool DLDI/ak2_sd.dldi $@
+
 r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.elf
 	@echo "Make r4ids.cn"
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
@@ -149,5 +155,5 @@ clean:
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
 	@rm -rf $(TARGET).nds $(TARGET).elf $(TARGET)_r4ids.cn.elf $(TARGET)_r4idsn.elf $(TARGET)_ak2.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS Gateway r4ids.cn R4iDSN r4.dat
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE Gateway r4ids.cn R4iDSN r4.dat
 	@rm -rf data bootstrap bootstrap.zip

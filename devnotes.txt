@@ -33,7 +33,7 @@ flashcarts with a particular load address:
     - R4i Ultra can just be converted to an Acekard 2i. One should do that instead and get the benefits of a true Acekard 2i instead.
 - Acekard 2, 2.1, 2i
     - EWRAM entry (e9 entry address) must be 0x02000450
-- Wood r4igold.cc upgrade
+- Amaze3DS / Wood r4igold.cc upgrade
     - Appears to be related to the Galaxy Eagle line?
     - EWRAM entry (e9 entry address) must be 0x02000000
 - R4iDSN

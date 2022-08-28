@@ -13,6 +13,7 @@ Currently available flashcarts:
 - R4iDSN (_dsmenu.dat)
 - Acekard 2, 2.1, 2i (akmenu4.nds)
 - r4ids.cn carts, R4 Ultra, R4iTT NEW, R4iTT 3DS, r4i-gold.me, r4i3d.com carts with a year number, r4igold.cc 3DS, r4i-drive.com, r4isdhc.com carts that are ***NOT*** between 2014-2021, r4isdhc.hk carts that are ***NOT*** 2021 (in r4ids.cn folder)
+- Amaze3DS, Wood r4igold.cc Upgrade (in MAZE folder)
 - Ace3DS+ (in ACEP folder)
 - R4iLS, r4isdhc.com.cn, r4isdhc.hk (in R4iLS folder)
 - Gateway Blue (in Gateway folder)
