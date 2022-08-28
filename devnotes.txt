@@ -55,6 +55,10 @@ flashcarts that require extra files
     - iTouchDS, iTouch2
         - launches `boot.*` depending on region of cart. No easy way to identify, but they are all different encryption keys.
         - just check which one it is manually, it's 3 files anyway
+- N5
+    - An `_AX_MENU.dat` is required. No one knows what it's for.
+    - Seems to need to be valid, an empty `_AX_MENU.dat` doesn't do anything.
+    - Otherwise the actual boot file, `_DS_MENU.dat` can be anything.
 - SuperCard DSONE SDHC / SuperCard DSOnei
     - For some reason if you try to directly create the DSONE SDHC bootloader you don't get access to entire hardware. This breaks YSMenu.
         - Thus some extra binaries are included

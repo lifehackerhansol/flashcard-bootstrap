@@ -22,16 +22,19 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all		:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+all		:	$(TARGET).nds _ds_menu.dat N5/_ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
 
-dist	:	$(TARGET).nds _ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
+	@mkdir -p bootstrap/N5
 	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
+	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
+	@cp N5/_ds_menu.dat bootstrap/N5/_ds_menu.dat
 	
 	@cd bootstrap && zip -r bootstrap.zip *
 	@mv bootstrap/bootstrap.zip $(TOPDIR)
@@ -40,6 +43,11 @@ _ds_menu.dat:	$(TARGET).nds
 	@echo "Make original R4"
 	@dlditool "DLDI/m3r4_r4tf.dldi" $<
 	@r4denc $< $@
+
+N5/_ds_menu.dat:	$(TARGET).nds
+	echo "Make N5"
+	[ -d N5 ] || mkdir -p "N5"
+	cp $< $@
 
 ez5sys.bin:	$(TARGET).nds
 	@echo "Make EZ-Flash V"
@@ -155,5 +163,5 @@ clean:
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
 	@rm -rf $(TARGET).nds $(TARGET).elf $(TARGET)_r4ids.cn.elf $(TARGET)_r4idsn.elf $(TARGET)_ak2.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE Gateway r4ids.cn R4iDSN r4.dat
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn R4iDSN r4.dat
 	@rm -rf data bootstrap bootstrap.zip
