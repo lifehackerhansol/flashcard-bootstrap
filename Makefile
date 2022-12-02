@@ -67,7 +67,7 @@ r4i.sys	:	$(TARGET).nds
 ismat.dat:	$(TARGET).nds
 	@echo "Make iSmart Premium"
 	@cp $< $@
-	@dlditool DLDI/Mat.dldi $@
+	@dlditool DLDI/mati.dldi $@
 
 ACEP/_ds_menu.dat:	$(TARGET).nds
 	@echo "Make Ace3DS+"
