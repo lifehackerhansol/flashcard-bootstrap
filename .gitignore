@@ -6,9 +6,11 @@
 *.bin
 *.zip
 *.sys
+*.eng
 bootstrap
 data
 build
 !resource/*
 !resource/*/*
 resource/r4isdhc/r4isdhc
+resource/dsbize/dsbize

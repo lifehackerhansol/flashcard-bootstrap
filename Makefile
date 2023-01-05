@@ -22,16 +22,33 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all		:	$(TARGET).nds _ds_menu.dat N5/_ds_menu.dat ez5sys.bin _boot_mp.nds r4i.sys ismat.dat ACEP/_ds_menu.dat akmenu4.nds ttmenu.dat r4.dat _dsmenu.dat MAZE/_ds_menu.dat r4ids.cn/_ds_menu.dat R4iLS/_dsmenu.dat Gateway/_dsmenu.dat
+all		:	$(TARGET).nds \
+			_ds_menu.dat \
+			N5/_ds_menu.dat \
+			ez5sys.bin \
+			_boot_mp.nds \
+			r4i.sys \
+			ismat.dat \
+			ACEP/_ds_menu.dat \
+			akmenu4.nds \
+			ttmenu.dat \
+			r4.dat \
+			_dsmenu.dat \
+			MAZE/_ds_menu.dat \
+			r4ids.cn/_ds_menu.dat \
+			R4iLS/_dsmenu.dat \
+			Gateway/_dsmenu.dat \
+			G003/g003menu.eng
 
 dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds G003 _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
+	@cp -r resource/G003/* bootstrap/G003
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
 	@cp N5/_ds_menu.dat bootstrap/N5/_ds_menu.dat
@@ -94,7 +111,6 @@ r4.dat: 	ttmenu.dat
 
 _dsmenu.dat:	$(TARGET)_r4idsn.elf
 	@echo "Make R4iDSN"
-	@[ -d R4iDSN ] || mkdir -p R4iDSN
 	@ndstool -h 0x200 -c $@ -9 $<
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
@@ -126,6 +142,11 @@ Gateway/_dsmenu.dat:	$(TARGET).elf
 	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
 	@rm Gateway/_DSMENU.nds
 
+G003/g003menu.eng:	_dsmenu.dat
+	@echo "Make GMP-Z003"
+	@[ -d G003 ] || mkdir -p G003
+	@dlditool DLDI/G003.dldi $<
+	@./resource/dsbize/dsbize $< $@ 0x12
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	:	$(TARGET).elf
@@ -163,5 +184,5 @@ clean:
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
 	@rm -rf $(TARGET).nds $(TARGET).elf $(TARGET)_r4ids.cn.elf $(TARGET)_r4idsn.elf $(TARGET)_ak2.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn R4iDSN r4.dat
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn r4.dat G003/
 	@rm -rf data bootstrap bootstrap.zip

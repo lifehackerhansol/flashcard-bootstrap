@@ -21,6 +21,7 @@ Currently available flashcarts:
 - M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, iTouch2, R4(i)RTS (r4rts.com), R4 SDHC RTS black (in M3R_iTDS_R4RTS folder)
 - DSOne SDHC, DSOnei (in DSOneSDHC_DSOnei folder)
 - R4i-SDHC and related timebomb clones (r4.dat)
+- M3i Zero (GMP-Z003) (in G003 folder)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 
