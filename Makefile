@@ -44,11 +44,13 @@ dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds G003 _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@mkdir -p bootstrap/G003/system
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
-	@cp -r resource/G003/* bootstrap/G003
+	@cp -r resource/G003/* bootstrap/G003/system
+	@cp G003/g003menu.eng bootstrap/G003/system
 	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
 	@cp N5/_ds_menu.dat bootstrap/N5/_ds_menu.dat
