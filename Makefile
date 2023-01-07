@@ -38,7 +38,8 @@ all		:	$(TARGET).nds \
 			r4ids.cn/_ds_menu.dat \
 			R4iLS/_dsmenu.dat \
 			Gateway/_dsmenu.dat \
-			G003/g003menu.eng
+			G003/g003menu.eng \
+			DSOneSDHC_DSOnei/ttmenu.dat
 
 dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
@@ -51,7 +52,7 @@ dist	:	all
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
 	@cp -r resource/G003/* bootstrap/G003/system
 	@cp G003/g003menu.eng bootstrap/G003/system
-	@cp ttmenu.dat bootstrap/DSOneSDHC_DSOnei/ttmenu.dat
+	@cp -r DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp r4i.sys bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data/r4i.sys
 	@cp N5/_ds_menu.dat bootstrap/N5/_ds_menu.dat
 	
@@ -102,7 +103,13 @@ akmenu4.nds:	$(TARGET)_ak2.elf
 ttmenu.dat:		akmenu4.nds
 	@echo "Make DSTT"
 	@cp $< $@
-	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
+	@dlditool DLDI/ttio.dldi $@
+
+DSOneSDHC_DSOnei/ttmenu.dat:	ttmenu.dat
+	@echo "Make DSONE SDHC"
+	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
+	@cp $< $@
+	@dlditool DLDI/scdssdhc2.dldi $@
 
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"
