@@ -103,13 +103,13 @@ akmenu4.nds:	$(TARGET)_ak2.elf
 ttmenu.dat:		akmenu4.nds
 	@echo "Make DSTT"
 	@cp $< $@
-	@dlditool DLDI/ttio.dldi $@
+	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
 
 DSOneSDHC_DSOnei/ttmenu.dat:	ttmenu.dat
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
-	@dlditool DLDI/scdssdhc2.dldi $@
+	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
 
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"
