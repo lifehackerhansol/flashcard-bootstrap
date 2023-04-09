@@ -6,8 +6,8 @@
 */
 
 #include <nds.h>
-#include <fat.h>
 #include <nds/arm9/dldi.h>
+#include <fatfs.h>
 
 #include <stdio.h>
 
@@ -15,9 +15,9 @@
 
 int fail(char* error){
 	consoleDemoInit();
-	iprintf("Bootstrap fail:\n");
-	iprintf("%s\n\n", error);
-	iprintf("Press START to power off.");
+	printf("Bootstrap fail:\n");
+	printf("%s\n\n", error);
+	printf("Press START to power off.");
 	while(1) {
 		swiWaitForVBlank();
 		scanKeys();

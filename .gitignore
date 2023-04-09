@@ -8,6 +8,9 @@
 *.sys
 *.eng
 *.sc
+*.d
+*.o
+
 bootstrap
 data
 build

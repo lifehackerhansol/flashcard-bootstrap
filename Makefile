@@ -1,9 +1,11 @@
-#---------------------------------------------------------------------------------
-.SUFFIXES:
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2023
+
+BLOCKSDS	?= /opt/blocksds/core
+BLOCKSDSEXT	?= /opt/blocksds/external
+
+export TOPDIR := $(shell pwd $(CURDIR))
 
 ifneq (,$(shell which python3))
 PYTHON	:= python3
@@ -15,26 +17,69 @@ else
 $(error "Python not found in PATH, please install it.")
 endif
 
-include $(DEVKITARM)/ds_rules
+# User config
+# ===========
 
-export TARGET		:=	bootstrap
-export TOPDIR		:=	$(CURDIR)
-export DATA			:=	$(TOPDIR)/data
+NAME		:= bootstrap
 
-export LIBNDS32	:= $(TOPDIR)/libnds32/
+GAME_TITLE	:= flashcard-bootstrap
+GAME_SUBTITLE	:= kernel replacement project
+GAME_AUTHOR	:= lifehackerhansol
+GAME_ICON	:= icon.bmp
 
-BINFILES	:=	load.bin
+# DLDI and internal SD slot of DSi
+# --------------------------------
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(PNGFILES:.png=.o) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+# Root folder of the SD image
+SDROOT		:= sdroot
+# Name of the generated image it "DSi-1.sd" for no$gba in DSi mode
+SDIMAGE		:= image.bin
 
-.PHONY: checkarm7 checkarm9 bootloader bootstub dist
+# Source code paths
+# -----------------
 
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-all		:	$(TARGET).nds \
+NITROFSDIR	:= # A single directory that is the root of NitroFS
+
+# Tools
+# -----
+
+MAKE		:= make
+RM		:= rm -rf
+
+# Verbose flag
+# ------------
+
+ifeq ($(VERBOSE),1)
+V		:=
+else
+V		:= @
+endif
+
+# Directories
+# -----------
+
+ARM9DIR		:= arm9
+ARM7DIR		:= arm7
+DATA		:= $(CURDIR)/data
+
+# Build artfacts
+# --------------
+
+ROM		:= $(NAME).nds
+
+ROM_R4ILS		:= $(NAME)_r4ils.nds
+ROM_GATEWAY		:= $(NAME)_gateway.nds
+ROM_DSONE		:= $(NAME)_dsone.nds
+ROM_02000000		:= $(NAME)_02000000.nds
+ROM_02000450		:= $(NAME)_02000450.nds
+ROM_02000800		:= $(NAME)_02000800.nds
+
+# Targets
+# -------
+
+.PHONY: all clean dist arm9 arm7 dldipatch sdimage
+
+all: $(ROM) \
 			_ds_menu.dat \
 			N5/_ds_menu.dat \
 			ez5sys.bin \
@@ -58,6 +103,115 @@ all		:	$(TARGET).nds \
 			DSOneSDHC_DSOnei/ttmenu.dat \
 			scfw.sc
 
+clean:
+	@echo "  CLEAN"
+	$(V)$(MAKE) -C arm9 clean --no-print-directory
+	$(V)$(MAKE) -C arm9_crt0set clean --no-print-directory
+	$(V)$(MAKE) -C arm9_r4ids.cn clean --no-print-directory
+	$(V)$(MAKE) -f Makefile.arm7 clean --no-print-directory
+	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) build $(SDIMAGE) $(DATA)
+	$(V)$(RM) bootstrap  bootstrap.zip \
+			_ds_menu.dat N5 ez5sys.bin _boot_mp.nds bootme.nds r4i.sys ismat.dat _ds_menu.nds ez5isys.bin ACEP akmenu4.nds \
+			ttmenu.dat r4.dat _dsmenu.dat dsedgei.dat MAZE r4ids.cn R4iLS Gateway G003 DSOneSDHC_DSOnei scfw.sc
+
+arm9:
+	$(V)+$(MAKE) -C arm9 --no-print-directory
+
+arm9_02000000:
+	$(V)+$(MAKE) -C arm9_crt0set --no-print-directory CRT0=0x02000000
+
+arm9_02000450:
+	$(V)+$(MAKE) -C arm9_crt0set --no-print-directory CRT0=0x02000450
+
+arm9_02000800:
+	$(V)+$(MAKE) -C arm9_r4ids.cn --no-print-directory
+
+arm7:
+	$(V)+$(MAKE) -f Makefile.arm7 --no-print-directory
+
+ifneq ($(strip $(NITROFSDIR)),)
+# Additional arguments for ndstool
+NDSTOOL_ARGS	:= -d $(NITROFSDIR)
+
+# Make the NDS ROM depend on the filesystem only if it is needed
+$(ROM): $(NITROFSDIR)
+endif
+
+# Combine the title strings
+ifeq ($(strip $(GAME_SUBTITLE)),)
+    GAME_FULL_TITLE := $(GAME_TITLE);$(GAME_AUTHOR)
+else
+    GAME_FULL_TITLE := $(GAME_TITLE);$(GAME_SUBTITLE);$(GAME_AUTHOR)
+endif
+
+$(ROM): arm9 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+
+$(ROM_GATEWAY): arm9 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 -g "####" "##" "R4IT" \
+		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+
+$(ROM_R4ILS): arm9 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 -g "####" "##" "R4XX" \
+		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+
+$(ROM_DSONE): arm9 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 -g "ENG0" \
+		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+
+$(ROM_02000000): arm9_02000000 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 arm9_crt0set/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+	$(V)+$(MAKE) -C arm9_crt0set clean
+
+$(ROM_02000450): arm9_02000450 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 arm9_crt0set/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+	$(V)+$(MAKE) -C arm9_crt0set clean
+
+$(ROM_02000800): arm9_02000800 arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 arm9_r4ids.cn/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+	$(V)+$(MAKE) -C arm9_crt0set clean
+
+sdimage:
+	@echo "  MKFATIMG $(SDIMAGE) $(SDROOT)"
+	$(V)$(BLOCKSDS)/tools/mkfatimg/mkfatimg -t $(SDROOT) $(SDIMAGE)
+
+dldipatch: $(ROM)
+	@echo "  DLDIPATCH $(ROM)"
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch \
+		$(BLOCKSDS)/sys/dldi_r4/r4tf.dldi $(ROM)
+
 dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
@@ -77,32 +231,32 @@ dist	:	all
 	@cd bootstrap && zip -r bootstrap.zip *
 	@mv bootstrap/bootstrap.zip $(TOPDIR)
 
-_ds_menu.dat:	$(TARGET).nds
+_ds_menu.dat:	$(ROM)
 	@echo "Make original R4"
 	@dlditool "DLDI/r4tfv3.dldi" $<
 	@r4denc $< $@
 
-N5/_ds_menu.dat:	$(TARGET).nds
+N5/_ds_menu.dat:	$(ROM)
 	@echo "Make N5"
 	@[ -d N5 ] || mkdir -p "N5"
 	@cp $< $@
 
-ez5sys.bin:	$(TARGET).nds
+ez5sys.bin:	$(ROM)
 	@echo "Make EZ-Flash V"
 	@cp $< $@
 	@dlditool DLDI/ez5h.dldi $@
 
-_boot_mp.nds:	$(TARGET).nds
+_boot_mp.nds:	$(ROM)
 	@echo "Make GBAMP"
 	@cp $< $@
 	@dlditool DLDI/mpcf.dldi $@
 
-r4i.sys	:	$(TARGET).nds
+r4i.sys	:	$(ROM)
 	@echo "Make M3R_iTDS_R4RTS"
 	@cp $< $@
 	@dlditool "DLDI/m3ds.dldi" $@
 
-ismat.dat:	$(TARGET).nds
+ismat.dat:	$(ROM)
 	@echo "Make iSmart Premium"
 	@cp $< $@
 	@dlditool DLDI/mati.dldi $@
@@ -115,33 +269,33 @@ ez5isys.bin:	ismat.dat
 	@echo "Make EZ-Flash Vi"
 	@cp $< $@
 
-bootme.nds: $(TARGET).nds
+bootme.nds: $(ROM)
 	@echo "Make Games n Music"
 	@cp $< $@
 	@dlditool DLDI/gmtf.dldi $<
 
-ACEP/_ds_menu.dat:	$(TARGET).nds
+ACEP/_ds_menu.dat:	$(ROM)
 	@echo "Make Ace3DS+"
 	@[ -d ACEP ] || mkdir -p ACEP
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-scfw.sc:	$(TARGET)_dsone.nds
+scfw.sc:	$(ROM_DSONE)
 	@echo "Make SuperCard DSONE"
 	@cp $< $@
 	@dlditool DLDI/scds3.dldi $<
 
-akmenu4.nds:	$(TARGET)_02000450.nds
+akmenu4.nds:	$(ROM_02000450)
 	@echo "Make AK2"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-ttmenu.dat:		$(TARGET)_02000450.nds
+ttmenu.dat:		$(ROM_02000450)
 	@echo "Make DSTT"
 	@cp $< $@
 	@dlditool DLDI/ttio_sdhc.dldi $@
 
-DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_02000450.nds
+DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM_02000450)
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
@@ -155,113 +309,42 @@ r4.dat: 	ttmenu.dat
 	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
-_dsmenu.dat:	$(TARGET)_02000000.nds
+_dsmenu.dat:	$(ROM_02000000)
 	@echo "Make R4iDSN"
 	@cp $< $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
-dsedgei.dat:	$(TARGET)_02000800.nds
+dsedgei.dat:	$(ROM_02000800)
 	@echo "Make EDGEi"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-MAZE/_ds_menu.dat:	$(TARGET)_02000000.nds
+MAZE/_ds_menu.dat:	$(ROM_02000000)
 	@echo "Make Amaze3DS/R4igold.cc Wood"
 	@[ -d MAZE ] || mkdir -p MAZE
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-r4ids.cn/_ds_menu.dat:	$(TARGET)_02000800.nds
+r4ids.cn/_ds_menu.dat:	$(ROM_02000800)
 	@echo "Make r4ids.cn"
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-R4iLS/_dsmenu.dat:	$(TARGET)_r4ils.nds
+R4iLS/_dsmenu.dat:	$(ROM_R4ILS)
 	@echo "Make R4iLS"
 	@[ -d R4iLS ] || mkdir -p R4iLS
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-Gateway/_dsmenu.dat:	$(TARGET)_gateway.nds
+Gateway/_dsmenu.dat:	$(ROM_GATEWAY)
 	@echo "Make GW"
 	@[ -d Gateway ] || mkdir -p Gateway
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-G003/g003menu.eng:	$(TARGET)_02000000.nds
+G003/g003menu.eng:	$(ROM_02000000)
 	@echo "Make GMP-Z003"
 	@[ -d G003 ] || mkdir -p G003
 	@dlditool DLDI/g003.dldi $<
 	@./resource/dsbize/dsbize $< $@ 0x12
-
-#---------------------------------------------------------------------------------
-# Default entry address
-$(TARGET).nds	:	$(TARGET).elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
-
-# Default entry address with header change for DSONE
-$(TARGET)_dsone.nds	:	$(TARGET).elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -g "ENG0" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
-
-# Default entry address with header change for R4iLS
-$(TARGET)_r4ils.nds	:	$(TARGET).elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -g "####" "##" "R4XX" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
-
-# Default entry address with header change for Gateway / R4 Infinity
-$(TARGET)_gateway.nds	:	$(TARGET).elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
-
-# 0x02000450
-$(TARGET)_02000450.nds	:	$(TARGET)_02000450.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000450.elf -7 $(TARGET).arm7.elf
-
-# 0x02000800
-$(TARGET)_02000800.nds	:	$(TARGET)_02000800.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000800.elf -7 $(TARGET).arm7.elf
-
-# 0x02000000
-$(TARGET)_02000000.nds	:	$(TARGET)_02000000.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000000.elf -7 $(TARGET).arm7.elf
-
-data:
-	@mkdir -p $@
-
-bootloader: data
-	@$(MAKE) -C bootloader LOADBIN=$(DATA)/load.bin
-
-#---------------------------------------------------------------------------------
-$(TARGET).elf: bootloader bootstub
-	@$(MAKE) -C arm9
-	@cp arm9/$(TARGET).elf $@
-
-$(TARGET).arm7.elf:
-	@$(MAKE) -C arm7
-	@cp arm7/$(TARGET).elf $@
-
-$(TARGET)_02000800.elf: bootloader bootstub
-	@$(MAKE) -C arm9_r4ids.cn
-	@cp arm9_r4ids.cn/$(TARGET).elf $@
-
-$(TARGET)_02000000.elf: bootloader bootstub
-	@$(MAKE) -C arm9_crt0set CRT0=0x02000000
-	@cp arm9_crt0set/$(TARGET).elf $@
-	@$(MAKE) -C arm9_crt0set clean
-
-$(TARGET)_02000450.elf: bootloader bootstub
-	@$(MAKE) -C arm9_crt0set CRT0=0x02000450
-	@cp arm9_crt0set/$(TARGET).elf $@
-	@$(MAKE) -C arm9_crt0set clean
-
-#---------------------------------------------------------------------------------
-clean:
-	$(MAKE) -C arm7 clean
-	$(MAKE) -C arm9 clean
-	$(MAKE) -C arm9_r4ids.cn clean
-	$(MAKE) -C arm9_crt0set clean
-	$(MAKE) -C bootloader clean
-	@rm -rf arm*/data
-	@rm -rf $(TARGET)*.nds $(TARGET)*.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat _ds_menu.nds ez5isys.bin r4i.sys scfw.sc dsedgei.dat
-	@rm -rf ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003
-	@rm -rf data bootstrap bootstrap.zip
