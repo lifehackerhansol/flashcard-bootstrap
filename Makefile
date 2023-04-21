@@ -11,6 +11,8 @@ export TARGET		:=	bootstrap
 export TOPDIR		:=	$(CURDIR)
 export DATA			:=	$(TOPDIR)/data
 
+export LIBNDS32	:= $(TOPDIR)/libnds32/
+
 BINFILES	:=	load.bin
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \

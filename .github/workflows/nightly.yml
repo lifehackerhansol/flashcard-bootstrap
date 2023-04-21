@@ -31,6 +31,7 @@ jobs:
           chmod +x resource/dsbize/dsbize
       - name: Make flashcard-bootstrap
         run: |
+          make -C libnds32
           make dist
       - name: Prepare for build publishing
         run: |

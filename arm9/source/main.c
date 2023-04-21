@@ -2,6 +2,7 @@
 
 #include <nds.h>
 #include <fat.h>
+#include <nds/arm9/dldi.h>
 
 #include <stdio.h>
 
@@ -23,6 +24,7 @@ int fail(char* error){
 
 int main(void) {
 	if (!fatInitDefault()) return fail("FAT init failed!\n");
+	if(io_dldi_data->driverSize > 0xE) return fail("DLDI driver too large!\nPlease update your kernel.");
 	int err = runNdsFile("/BOOT.nds", 0, NULL);
 	char message[20];
 	sprintf(message, "Error code: %d", err);
