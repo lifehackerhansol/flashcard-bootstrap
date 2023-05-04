@@ -61,7 +61,7 @@ dist	:	all
 
 _ds_menu.dat:	$(TARGET).nds
 	@echo "Make original R4"
-	@dlditool "DLDI/m3r4_r4tf.dldi" $<
+	@dlditool "DLDI/r4tf_sdhc.dldi" $<
 	@r4denc $< $@
 
 N5/_ds_menu.dat:	$(TARGET).nds
@@ -82,7 +82,7 @@ _boot_mp.nds:	$(TARGET).nds
 r4i.sys	:	$(TARGET).nds
 	@echo "Make M3R_iTDS_R4RTS"
 	@cp $< $@
-	@dlditool "DLDI/m3r4_m3ds.dldi" $@
+	@dlditool "DLDI/m3ds.dldi" $@
 
 ismat.dat:	$(TARGET).nds
 	@echo "Make iSmart Premium"
@@ -103,13 +103,13 @@ akmenu4.nds:	$(TARGET)_ak2.elf
 ttmenu.dat:		akmenu4.nds
 	@echo "Make DSTT"
 	@cp $< $@
-	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
+	@dlditool DLDI/ttio_sdhc.dldi $@
 
 DSOneSDHC_DSOnei/ttmenu.dat:	ttmenu.dat
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
-	@dlditool DLDI/DSTTDLDIboyakkeyver.dldi $@
+	@dlditool DLDI/scdssdhc2.dldi $@
 
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"

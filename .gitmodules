@@ -4,3 +4,4 @@
 [submodule "DLDI"]
 	path = DLDI
 	url = https://github.com/DS-Homebrew/DLDI
+	branch = builds
