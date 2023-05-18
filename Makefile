@@ -154,7 +154,7 @@ Gateway/_dsmenu.dat:	$(TARGET).elf
 G003/g003menu.eng:	_dsmenu.dat
 	@echo "Make GMP-Z003"
 	@[ -d G003 ] || mkdir -p G003
-	@dlditool DLDI/G003.dldi $<
+	@dlditool DLDI/g003.dldi $<
 	@./resource/dsbize/dsbize $< $@ 0x12
 
 #---------------------------------------------------------------------------------
