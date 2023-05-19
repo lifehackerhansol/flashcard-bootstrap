@@ -27,6 +27,7 @@ all		:	$(TARGET).nds \
 			N5/_ds_menu.dat \
 			ez5sys.bin \
 			_boot_mp.nds \
+			bootme.nds \
 			r4i.sys \
 			ismat.dat \
 			ACEP/_ds_menu.dat \
@@ -46,7 +47,7 @@ dist	:	all
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
@@ -88,6 +89,11 @@ ismat.dat:	$(TARGET).nds
 	@echo "Make iSmart Premium"
 	@cp $< $@
 	@dlditool DLDI/mati.dldi $@
+
+bootme.nds: $(TARGET).nds
+	@echo "Make Games n Music"
+	@cp $< $@
+	@dlditool DLDI/gmtf.dldi $<
 
 ACEP/_ds_menu.dat:	$(TARGET).nds
 	@echo "Make Ace3DS+"
@@ -193,5 +199,5 @@ clean:
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
 	@rm -rf $(TARGET).nds $(TARGET).elf $(TARGET)_r4ids.cn.elf $(TARGET)_r4idsn.elf $(TARGET)_ak2.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn r4.dat G003/
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn r4.dat G003/
 	@rm -rf data bootstrap bootstrap.zip

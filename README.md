@@ -12,6 +12,7 @@ Currently available flashcarts:
 - Original R4 (_ds_menu.dat)
 - R4iDSN (_dsmenu.dat)
 - Acekard 2, 2.1, 2i (akmenu4.nds)
+- Datel Games 'n' Music, Action Replay DSi (bootme.nds)
 - N5 (in N5 folder)
 - r4ids.cn carts, R4 Ultra, R4iTT NEW, R4iTT 3DS, r4i-gold.me, r4i3d.com carts with a year number, r4igold.cc 3DS, r4i-drive.com, r4isdhc.com carts that are ***NOT*** between 2014-2021, r4isdhc.hk carts that are ***NOT*** 2021 (in r4ids.cn folder)
 - Amaze3DS, Wood r4igold.cc Upgrade (in MAZE folder)
