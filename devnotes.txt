@@ -6,6 +6,8 @@ flashcarts that can be directly built:
 - GBA Movie Player (Compact Flash) (NDS MP flashed)
 - iSmart Premium
 - EZ-Flash V (SDHC is not tested. Some outdated sources suggest that EZV SDHC does not have SD card init, and thus cannot be booted from DLDI alone.)
+- Datel Games 'n' Music and Action Replay DSi
+    - Interestingly the ARDSi can run homebrew...
 
 flashcarts that have some protection built in
 - Original R4
