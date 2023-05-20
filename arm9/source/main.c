@@ -1,4 +1,9 @@
-// CC0 public domain, by lifehackerhansol
+/*
+	flashcard-bootstrap
+	By lifehackerhansol
+
+	SPDX-License-Identifier: 0BSD
+*/
 
 #include <nds.h>
 #include <fat.h>
