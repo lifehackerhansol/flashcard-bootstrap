@@ -5,6 +5,16 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifneq (,$(shell which python3))
+PYTHON	:= python3
+else ifneq (,$(shell which python2))
+PYTHON	:= python2
+else ifneq (,$(shell which python))
+PYTHON	:= python
+else
+$(error "Python not found in PATH, please install it.")
+endif
+
 include $(DEVKITARM)/ds_rules
 
 export TARGET		:=	bootstrap
@@ -42,14 +52,16 @@ all		:	$(TARGET).nds \
 			R4iLS/_dsmenu.dat \
 			Gateway/_dsmenu.dat \
 			G003/g003menu.eng \
-			DSOneSDHC_DSOnei/ttmenu.dat
+			DSOneSDHC_DSOnei/ttmenu.dat \
+			scfw.sc
 
 dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
-	@cp -r _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat MAZE ACEP R4iLS Gateway r4ids.cn README.md bootstrap 
+	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat scfw.sc bootstrap
+	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
@@ -103,6 +115,11 @@ ACEP/_ds_menu.dat:	$(TARGET).nds
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
+scfw.sc:	$(TARGET)_dsone.nds
+	@echo "Make SuperCard DSONE"
+	@cp $< $@
+	@dlditool DLDI/scds3.dldi $<
+
 akmenu4.nds:	$(TARGET)_ak2.nds
 	@echo "Make AK2"
 	@cp $< $@
@@ -123,7 +140,7 @@ DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_ak2.nds
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"
 	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
-	@./resource/r4isdhc/r4isdhc arm9.bin new9.bin
+	@$(PYTHON) resource/r4isdhc/r4isdhc.py arm9.bin new9.bin
 	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
@@ -167,13 +184,17 @@ G003/g003menu.eng:	$(TARGET)_r4idsn.nds
 $(TARGET).nds	:	$(TARGET).elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
 
+# Default entry address with header change for DSONE
+$(TARGET)_dsone.nds	:	$(TARGET).elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -g "ENG0" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
+
 # Default entry address with header change for R4iLS
 $(TARGET)_r4ils.nds	:	$(TARGET).elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -g "####" "##" "R4XX" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
 
 # Default entry address with header change for Gateway / R4 Infinity
 $(TARGET)_gateway.nds	:	$(TARGET).elf $(TARGET).arm7.elf
-	@ndstool -h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
 
 # 0x02000450
 $(TARGET)_ak2.nds	:	$(TARGET)_ak2.elf $(TARGET).arm7.elf

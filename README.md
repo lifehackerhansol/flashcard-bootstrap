@@ -23,6 +23,7 @@ Currently available flashcarts:
 - DSOne SDHC, DSOnei (in DSOneSDHC_DSOnei folder)
 - R4i-SDHC and related timebomb clones (r4.dat)
 - M3i Zero (GMP-Z003) (in G003 folder)
+- SuperCard DSONE (non-SDHC) (scfw.sc)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 

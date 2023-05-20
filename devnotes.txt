@@ -27,6 +27,8 @@ flashcarts that have some protection built in
     - has a hash checking watermark at every 0x200 bytes
     - Taiju Yamada has an arm9 patcher for this. EWRAM entry (e9 entry address) must be 0x02000450 for this patcher
     - Extract compiled arm9, patch arm9, rebuild NDS with ndstool and set RAM address (r9 address) to 0x02000000
+- SuperCard DSONE (non-SDHC)
+    - build with ndstool with args `-g "ENG0"`
 
 flashcarts with a particular load address:
 - all r4ids.cn carts, R4 Ultra and R4i Ultra
@@ -77,9 +79,7 @@ flashcarts that require extra files or tools
         - SCFW.SC is presumably the newer one.
         - Both files are exactly the same and behave exactly the same. But for sanity check just have both.
         - This is meant to be a triple loader, but I don't actually remember which files it boots other than TTMenu.dat. 
-            - We are going to use TTMenu.dat for simplicity's sake. 
-            - The exact same DLDI as any DSTT is used. And it works, so who cares XD
-        - Not compatible with the original DSOne. This will require another DLDI.
+            - We are going to use TTMenu.dat for simplicity's sake.
 
 random notes:
 - MSHL2 writes 32KB of data, regardless of what your DLDI size is. This breaks a bunch of homebrew. You need to recompile libnds with 32KB DLDI size to fix.
