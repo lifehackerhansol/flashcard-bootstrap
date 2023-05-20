@@ -1,2 +1,2 @@
 make -C libnds32
-make
+make dist
