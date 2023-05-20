@@ -103,22 +103,23 @@ ACEP/_ds_menu.dat:	$(TARGET).nds
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-akmenu4.nds:	$(TARGET)_ak2.elf
+akmenu4.nds:	$(TARGET)_ak2.nds
 	@echo "Make AK2"
-	@ndstool -h 0x200 -c $@ -9 $<
+	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-ttmenu.dat:		akmenu4.nds
+ttmenu.dat:		$(TARGET)_ak2.nds
 	@echo "Make DSTT"
 	@cp $< $@
 	@dlditool DLDI/ttio_sdhc.dldi $@
 
-DSOneSDHC_DSOnei/ttmenu.dat:	ttmenu.dat
+DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_ak2.nds
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
 	@dlditool DLDI/scdssdhc2.dldi $@
 
+# Hack TTMenu.dat to bypass signature checks
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"
 	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
@@ -126,48 +127,65 @@ r4.dat: 	ttmenu.dat
 	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
-_dsmenu.dat:	$(TARGET)_r4idsn.elf
+_dsmenu.dat:	$(TARGET)_r4idsn.nds
 	@echo "Make R4iDSN"
-	@ndstool -h 0x200 -c $@ -9 $<
+	@cp $< $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
-MAZE/_ds_menu.dat:	_dsmenu.dat
+MAZE/_ds_menu.dat:	$(TARGET)_r4idsn.nds
 	@echo "Make Amaze3DS/R4igold.cc Wood"
 	@[ -d MAZE ] || mkdir -p MAZE
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.elf
+r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.nds
 	@echo "Make r4ids.cn"
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
-	@ndstool	-h 0x200 -c $@ -9 $<
+	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-R4iLS/_dsmenu.dat:	$(TARGET).elf
+R4iLS/_dsmenu.dat:	$(TARGET)_r4ils.nds
 	@echo "Make R4iLS"
 	@[ -d R4iLS ] || mkdir -p R4iLS
-	@ndstool -h 0x200 -g "####" "##" "R4XX" -c R4iLS/_DSMENU.nds -9 $<
-	@dlditool DLDI/ace3ds_sd.dldi R4iLS/_DSMENU.nds
-	@r4denc --key 0x4002 R4iLS/_DSMENU.nds $@
-	@rm -rf R4iLS/_DSMENU.nds
+	@dlditool DLDI/ace3ds_sd.dldi $<
+	@r4denc --key 0x4002 $< $@
 
-Gateway/_dsmenu.dat:	$(TARGET).elf
+Gateway/_dsmenu.dat:	$(TARGET)_gateway.nds
 	@echo "Make GW"
 	@[ -d Gateway ] || mkdir -p Gateway
-	@ndstool -h 0x200 -g "####" "##" "R4IT" -c Gateway/_DSMENU.nds -9 $<
-	@dlditool DLDI/ace3ds_sd.dldi Gateway/_DSMENU.nds
-	@r4denc --key 0x4002 Gateway/_DSMENU.nds $@
-	@rm Gateway/_DSMENU.nds
+	@dlditool DLDI/ace3ds_sd.dldi $<
+	@r4denc --key 0x4002 $< $@
 
-G003/g003menu.eng:	_dsmenu.dat
+G003/g003menu.eng:	$(TARGET)_r4idsn.nds
 	@echo "Make GMP-Z003"
 	@[ -d G003 ] || mkdir -p G003
 	@dlditool DLDI/g003.dldi $<
 	@./resource/dsbize/dsbize $< $@ 0x12
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	:	$(TARGET).elf
-	ndstool	-h 0x200 -c $@ -9 $<
+# Default entry address
+$(TARGET).nds	:	$(TARGET).elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
+
+# Default entry address with header change for R4iLS
+$(TARGET)_r4ils.nds	:	$(TARGET).elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -g "####" "##" "R4XX" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
+
+# Default entry address with header change for Gateway / R4 Infinity
+$(TARGET)_gateway.nds	:	$(TARGET).elf $(TARGET).arm7.elf
+	@ndstool -h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
+
+# 0x02000450
+$(TARGET)_ak2.nds	:	$(TARGET)_ak2.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_ak2.elf -7 $(TARGET).arm7.elf
+
+# 0x02000800
+$(TARGET)_r4ids.cn.nds	:	$(TARGET)_r4ids.cn.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_r4ids.cn.elf -7 $(TARGET).arm7.elf
+
+# 0x02000000
+$(TARGET)_r4idsn.nds	:	$(TARGET)_r4idsn.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_r4idsn.elf -7 $(TARGET).arm7.elf
 
 data:
 	@mkdir -p $@
@@ -179,6 +197,10 @@ bootloader: data
 $(TARGET).elf: bootloader bootstub
 	@$(MAKE) -C arm9
 	@cp arm9/$(TARGET).elf $@
+
+$(TARGET).arm7.elf:
+	@$(MAKE) -C arm7
+	@cp arm7/$(TARGET).elf $@
 
 $(TARGET)_r4ids.cn.elf: bootloader bootstub
 	@$(MAKE) -C arm9_r4ids.cn
@@ -196,10 +218,12 @@ $(TARGET)_ak2.elf: bootloader bootstub
 
 #---------------------------------------------------------------------------------
 clean:
+	$(MAKE) -C arm7 clean
 	$(MAKE) -C arm9 clean
 	$(MAKE) -C arm9_r4ids.cn clean
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
-	@rm -rf $(TARGET).nds $(TARGET).elf $(TARGET)_r4ids.cn.elf $(TARGET)_r4idsn.elf $(TARGET)_ak2.elf
+	@rm -rf arm*/data
+	@rm -rf $(TARGET)*.nds $(TARGET)*.elf
 	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys ACEP R4iLS MAZE N5 Gateway r4ids.cn r4.dat G003/
 	@rm -rf data bootstrap bootstrap.zip

@@ -19,6 +19,7 @@ int fail(char* error){
 		int pressed = keysDown();
 		if(pressed & KEY_START) break;
 	}
+	fifoSendValue32(FIFO_USER_01, 1); // turn off ARM7
 	return 0;
 }
 
