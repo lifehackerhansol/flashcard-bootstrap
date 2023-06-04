@@ -76,7 +76,7 @@ dist	:	all
 
 _ds_menu.dat:	$(TARGET).nds
 	@echo "Make original R4"
-	@dlditool "DLDI/r4tf_sdhc.dldi" $<
+	@dlditool "DLDI/r4tfv3.dldi" $<
 	@r4denc $< $@
 
 N5/_ds_menu.dat:	$(TARGET).nds
