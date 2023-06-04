@@ -18,9 +18,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y gcc
-          gcc -o resource/r4isdhc/r4isdhc resource/r4isdhc/r4isdhc.c
           gcc -o resource/dsbize/dsbize resource/dsbize/dsbize.c
-          chmod +x resource/r4isdhc/r4isdhc
           chmod +x resource/dsbize/dsbize
       - name: Make flashcard-bootstrap
         run: |
