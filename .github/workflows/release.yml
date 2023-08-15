@@ -2,7 +2,7 @@ name: Build flashcard-bootstrap Release
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build:
