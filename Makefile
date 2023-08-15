@@ -47,6 +47,7 @@ all		:	$(TARGET).nds \
 			ttmenu.dat \
 			r4.dat \
 			_dsmenu.dat \
+			dsedgei.dat \
 			MAZE/_ds_menu.dat \
 			r4ids.cn/_ds_menu.dat \
 			R4iLS/_dsmenu.dat \
@@ -60,7 +61,7 @@ dist	:	all
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
-	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat scfw.sc bootstrap
+	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc bootstrap
 	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
@@ -148,6 +149,11 @@ _dsmenu.dat:	$(TARGET)_r4idsn.nds
 	@echo "Make R4iDSN"
 	@cp $< $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
+
+dsedgei.dat:	$(TARGET)_r4ids.cn.nds
+	@echo "Make EDGEi"
+	@cp $< $@
+	@dlditool DLDI/ak2_sd.dldi $@
 
 MAZE/_ds_menu.dat:	$(TARGET)_r4idsn.nds
 	@echo "Make Amaze3DS/R4igold.cc Wood"
