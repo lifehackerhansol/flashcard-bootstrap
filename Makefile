@@ -121,17 +121,17 @@ scfw.sc:	$(TARGET)_dsone.nds
 	@cp $< $@
 	@dlditool DLDI/scds3.dldi $<
 
-akmenu4.nds:	$(TARGET)_ak2.nds
+akmenu4.nds:	$(TARGET)_02000450.nds
 	@echo "Make AK2"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-ttmenu.dat:		$(TARGET)_ak2.nds
+ttmenu.dat:		$(TARGET)_02000450.nds
 	@echo "Make DSTT"
 	@cp $< $@
 	@dlditool DLDI/ttio_sdhc.dldi $@
 
-DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_ak2.nds
+DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_02000450.nds
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
@@ -145,23 +145,23 @@ r4.dat: 	ttmenu.dat
 	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
-_dsmenu.dat:	$(TARGET)_r4idsn.nds
+_dsmenu.dat:	$(TARGET)_02000000.nds
 	@echo "Make R4iDSN"
 	@cp $< $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
-dsedgei.dat:	$(TARGET)_r4ids.cn.nds
+dsedgei.dat:	$(TARGET)_02000800.nds
 	@echo "Make EDGEi"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-MAZE/_ds_menu.dat:	$(TARGET)_r4idsn.nds
+MAZE/_ds_menu.dat:	$(TARGET)_02000000.nds
 	@echo "Make Amaze3DS/R4igold.cc Wood"
 	@[ -d MAZE ] || mkdir -p MAZE
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-r4ids.cn/_ds_menu.dat:	$(TARGET)_r4ids.cn.nds
+r4ids.cn/_ds_menu.dat:	$(TARGET)_02000800.nds
 	@echo "Make r4ids.cn"
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
 	@cp $< $@
@@ -179,7 +179,7 @@ Gateway/_dsmenu.dat:	$(TARGET)_gateway.nds
 	@dlditool DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
-G003/g003menu.eng:	$(TARGET)_r4idsn.nds
+G003/g003menu.eng:	$(TARGET)_02000000.nds
 	@echo "Make GMP-Z003"
 	@[ -d G003 ] || mkdir -p G003
 	@dlditool DLDI/g003.dldi $<
@@ -203,16 +203,16 @@ $(TARGET)_gateway.nds	:	$(TARGET).elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
 
 # 0x02000450
-$(TARGET)_ak2.nds	:	$(TARGET)_ak2.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_ak2.elf -7 $(TARGET).arm7.elf
+$(TARGET)_02000450.nds	:	$(TARGET)_02000450.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000450.elf -7 $(TARGET).arm7.elf
 
 # 0x02000800
-$(TARGET)_r4ids.cn.nds	:	$(TARGET)_r4ids.cn.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_r4ids.cn.elf -7 $(TARGET).arm7.elf
+$(TARGET)_02000800.nds	:	$(TARGET)_02000800.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000800.elf -7 $(TARGET).arm7.elf
 
 # 0x02000000
-$(TARGET)_r4idsn.nds	:	$(TARGET)_r4idsn.elf $(TARGET).arm7.elf
-	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_r4idsn.elf -7 $(TARGET).arm7.elf
+$(TARGET)_02000000.nds	:	$(TARGET)_02000000.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000000.elf -7 $(TARGET).arm7.elf
 
 data:
 	@mkdir -p $@
@@ -229,16 +229,16 @@ $(TARGET).arm7.elf:
 	@$(MAKE) -C arm7
 	@cp arm7/$(TARGET).elf $@
 
-$(TARGET)_r4ids.cn.elf: bootloader bootstub
+$(TARGET)_02000800.elf: bootloader bootstub
 	@$(MAKE) -C arm9_r4ids.cn
 	@cp arm9_r4ids.cn/$(TARGET).elf $@
 
-$(TARGET)_r4idsn.elf: bootloader bootstub
+$(TARGET)_02000000.elf: bootloader bootstub
 	@$(MAKE) -C arm9_crt0set CRT0=0x02000000
 	@cp arm9_crt0set/$(TARGET).elf $@
 	@$(MAKE) -C arm9_crt0set clean
 
-$(TARGET)_ak2.elf: bootloader bootstub
+$(TARGET)_02000450.elf: bootloader bootstub
 	@$(MAKE) -C arm9_crt0set CRT0=0x02000450
 	@cp arm9_crt0set/$(TARGET).elf $@
 	@$(MAKE) -C arm9_crt0set clean
