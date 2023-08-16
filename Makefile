@@ -81,9 +81,9 @@ _ds_menu.dat:	$(TARGET).nds
 	@r4denc $< $@
 
 N5/_ds_menu.dat:	$(TARGET).nds
-	echo "Make N5"
-	[ -d N5 ] || mkdir -p "N5"
-	cp $< $@
+	@echo "Make N5"
+	@[ -d N5 ] || mkdir -p "N5"
+	@cp $< $@
 
 ez5sys.bin:	$(TARGET).nds
 	@echo "Make EZ-Flash V"
