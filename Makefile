@@ -252,5 +252,5 @@ clean:
 	$(MAKE) -C bootloader clean
 	@rm -rf arm*/data
 	@rm -rf $(TARGET)*.nds $(TARGET)*.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys scfw.sc ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003/
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys scfw.sc dsedgei.dat ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003/
 	@rm -rf data bootstrap bootstrap.zip
