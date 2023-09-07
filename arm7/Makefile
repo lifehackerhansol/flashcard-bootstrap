@@ -22,9 +22,9 @@ DATA     :=
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH := -mthumb-interwork
+ARCH := -mthumb -mthumb-interwork
 
-CFLAGS   := -g -Wall -O3\
+CFLAGS   := -g -Wall -Os\
             $(ARCH) $(INCLUDE) -DARM7
 CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS  := -g $(ARCH)
