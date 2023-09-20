@@ -47,6 +47,7 @@ all		:	$(TARGET).nds \
 			ttmenu.dat \
 			r4.dat \
 			_dsmenu.dat \
+			dsx_firmware.nds \
 			dsedgei.dat \
 			MAZE/_ds_menu.dat \
 			r4ids.cn/_ds_menu.dat \
@@ -61,7 +62,7 @@ dist	:	all
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
-	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc bootstrap
+	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc dsx_firmware.nds bootstrap
 	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
@@ -150,6 +151,11 @@ _dsmenu.dat:	$(TARGET)_02000000.nds
 	@cp $< $@
 	@dlditool DLDI/r4idsn_sd.dldi $@
 
+dsx_firmware.nds:	$(TARGET)_dsx.nds
+	@echo "Make DS-Xtreme"
+	@cp $< $@
+	@dlditool DLDI/dsx.dldi $@
+
 dsedgei.dat:	$(TARGET)_02000800.nds
 	@echo "Make EDGEi"
 	@cp $< $@
@@ -214,6 +220,10 @@ $(TARGET)_02000800.nds	:	$(TARGET)_02000800.elf $(TARGET).arm7.elf
 $(TARGET)_02000000.nds	:	$(TARGET)_02000000.elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000000.elf -7 $(TARGET).arm7.elf
 
+# 0x02000000 ARM9, 0x03800000 ARM7 for DS-Xtreme
+$(TARGET)_dsx.nds	:	$(TARGET)_02000000.elf $(TARGET)_dsx.arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000000.elf -7 $(TARGET)_dsx.arm7.elf
+
 data:
 	@mkdir -p $@
 
@@ -228,6 +238,10 @@ $(TARGET).elf: bootloader bootstub
 $(TARGET).arm7.elf:
 	@$(MAKE) -C arm7
 	@cp arm7/$(TARGET).elf $@
+
+$(TARGET)_dsx.arm7.elf:
+	@$(MAKE) -C arm7_dsx
+	@cp arm7_dsx/$(TARGET).elf $@
 
 $(TARGET)_02000800.elf: bootloader bootstub
 	@$(MAKE) -C arm9_r4ids.cn
@@ -246,11 +260,13 @@ $(TARGET)_02000450.elf: bootloader bootstub
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm7 clean
+	$(MAKE) -C arm7_dsx clean
 	$(MAKE) -C arm9 clean
 	$(MAKE) -C arm9_r4ids.cn clean
 	$(MAKE) -C arm9_crt0set clean
 	$(MAKE) -C bootloader clean
 	@rm -rf arm*/data
 	@rm -rf $(TARGET)*.nds $(TARGET)*.elf
-	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys scfw.sc dsedgei.dat ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003/
+	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat r4i.sys scfw.sc dsedgei.dat dsx_firmware.nds
+	@rm -rf ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003
 	@rm -rf data bootstrap bootstrap.zip
