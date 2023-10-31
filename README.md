@@ -25,6 +25,9 @@ Currently available flashcarts:
 - R4i-SDHC and related timebomb clones (r4.dat)
 - M3i Zero (GMP-Z003) (in G003 folder)
 - SuperCard DSONE (non-SDHC) (scfw.sc)
+- iSmart Premium (ismat.dat)
+- EZ-Flash Vi (ez5isys.bin)
+- r4i.cn carts (_ds_menu.nds)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 
