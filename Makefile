@@ -234,7 +234,7 @@ dist	:	all
 _ds_menu.dat:	$(ROM)
 	@echo "Make original R4"
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/r4tfv3.dldi" $<
-	@r4denc $< $@
+	@./resource/r4denc/r4denc $< $@
 
 N5/_ds_menu.dat:	$(ROM)
 	@echo "Make N5"
@@ -278,7 +278,7 @@ ACEP/_ds_menu.dat:	$(ROM)
 	@echo "Make Ace3DS+"
 	@[ -d ACEP ] || mkdir -p ACEP
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
-	@r4denc --key 0x4002 $< $@
+	@./resource/r4denc/r4denc --key 0x4002 $< $@
 
 scfw.sc:	$(ROM_DSONE)
 	@echo "Make SuperCard DSONE"
@@ -335,13 +335,13 @@ R4iLS/_dsmenu.dat:	$(ROM_R4ILS)
 	@echo "Make R4iLS"
 	@[ -d R4iLS ] || mkdir -p R4iLS
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
-	@r4denc --key 0x4002 $< $@
+	@./resource/r4denc/r4denc --key 0x4002 $< $@
 
 Gateway/_dsmenu.dat:	$(ROM_GATEWAY)
 	@echo "Make GW"
 	@[ -d Gateway ] || mkdir -p Gateway
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
-	@r4denc --key 0x4002 $< $@
+	@./resource/r4denc/r4denc --key 0x4002 $< $@
 
 G003/g003menu.eng:	$(ROM_02000000)
 	@echo "Make GMP-Z003"

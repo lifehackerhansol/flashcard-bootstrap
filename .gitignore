@@ -16,5 +16,5 @@ data
 build
 !resource/*
 !resource/*/*
-resource/r4isdhc/r4isdhc
+resource/r4denc/r4denc
 resource/dsbize/dsbize
