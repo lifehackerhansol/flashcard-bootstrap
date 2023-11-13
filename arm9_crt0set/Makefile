@@ -124,6 +124,7 @@ LDFLAGS		:= -mthumb -mthumb-interwork $(LIBDIRSFLAGS) \
 		   -T$(BLOCKSDS)/sys/crts/ds_arm9.ld \
 		   -Wl,--defsym,__secure_area__=0 -Wl,--section-start,.crt0=$(CRT0),--nmagic \
 		   -Wl,--no-warn-rwx-segments \
+		   -Wl,--defsym=vfprintf=__i_vfprintf -Wl,--defsym=vfscanf=__i_vfscanf \
 		   -Wl,--start-group $(LIBS) -lgcc -Wl,--end-group
 
 # Intermediate build files
