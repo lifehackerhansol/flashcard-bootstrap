@@ -5,8 +5,6 @@
 BLOCKSDS	?= /opt/blocksds/core
 BLOCKSDSEXT	?= /opt/blocksds/external
 
-export TOPDIR := $(shell pwd $(CURDIR))
-
 # User config
 # ===========
 
@@ -229,7 +227,7 @@ dist	:	all
 	@cp N5/_ds_menu.dat bootstrap/N5/_ds_menu.dat
 	
 	@cd bootstrap && zip -r bootstrap.zip *
-	@mv bootstrap/bootstrap.zip $(TOPDIR)
+	@mv bootstrap/bootstrap.zip .
 
 _ds_menu.dat:	$(ROM)
 	@echo "Make original R4"

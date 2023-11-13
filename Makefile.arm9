@@ -8,8 +8,6 @@ BLOCKSDSEXT	?= /opt/blocksds/external
 WONDERFUL_TOOLCHAIN	?= /opt/wonderful
 ARM_NONE_EABI_PATH	?= $(WONDERFUL_TOOLCHAIN)/toolchain/gcc-arm-none-eabi/bin/
 
-export LIBNDS32	:= $(TOPDIR)/libnds32
-
 # Source code paths
 # -----------------
 
@@ -27,8 +25,8 @@ DEFINES		:= -D_NO_BOOTSTUB_
 # Libraries
 # ---------
 
-LIBS		:= -lnds329
-LIBDIRS		:= $(LIBNDS32)
+LIBS		:= -lnds9
+LIBDIRS		:= $(BLOCKSDS)/libs/libnds
 
 # Build artifacts
 # ---------------
