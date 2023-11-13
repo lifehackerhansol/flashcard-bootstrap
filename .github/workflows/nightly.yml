@@ -14,7 +14,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
+    container: skylyrac/blocksds:slim-latest
     name: Build with Docker using devkitARM
     steps:
       - name: Checkout repo
@@ -29,8 +29,8 @@ jobs:
           chmod +x resource/dsbize/dsbize
       - name: Make flashcard-bootstrap
         run: |
-          make -C libnds32
-          make dist
+          chmod +x build.sh
+          ./build.sh
       - name: Prepare for build publishing
         run: |
           mkdir -p ~/artifacts
