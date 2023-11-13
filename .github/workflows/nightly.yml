@@ -23,8 +23,8 @@ jobs:
           submodules: recursive
       - name: build dsbize patcher
         run: |
-          sudo apt update
-          sudo apt install -y python3 gcc
+          apt update
+          apt install -y python3 gcc
           gcc -o resource/dsbize/dsbize resource/dsbize/dsbize.c
           chmod +x resource/dsbize/dsbize
       - name: Make flashcard-bootstrap
