@@ -233,7 +233,7 @@ dist	:	all
 
 _ds_menu.dat:	$(ROM)
 	@echo "Make original R4"
-	@dlditool "DLDI/r4tfv3.dldi" $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/r4tfv3.dldi" $<
 	@r4denc $< $@
 
 N5/_ds_menu.dat:	$(ROM)
@@ -244,22 +244,22 @@ N5/_ds_menu.dat:	$(ROM)
 ez5sys.bin:	$(ROM)
 	@echo "Make EZ-Flash V"
 	@cp $< $@
-	@dlditool DLDI/ez5h.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ez5h.dldi $@
 
 _boot_mp.nds:	$(ROM)
 	@echo "Make GBAMP"
 	@cp $< $@
-	@dlditool DLDI/mpcf.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/mpcf.dldi $@
 
 r4i.sys	:	$(ROM)
 	@echo "Make M3R_iTDS_R4RTS"
 	@cp $< $@
-	@dlditool "DLDI/m3ds.dldi" $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/m3ds.dldi" $@
 
 ismat.dat:	$(ROM)
 	@echo "Make iSmart Premium"
 	@cp $< $@
-	@dlditool DLDI/mati.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/mati.dldi $@
 
 _ds_menu.nds:	ismat.dat
 	@echo "Make r4i.cn"
@@ -272,34 +272,34 @@ ez5isys.bin:	ismat.dat
 bootme.nds: $(ROM)
 	@echo "Make Games n Music"
 	@cp $< $@
-	@dlditool DLDI/gmtf.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/gmtf.dldi $<
 
 ACEP/_ds_menu.dat:	$(ROM)
 	@echo "Make Ace3DS+"
 	@[ -d ACEP ] || mkdir -p ACEP
-	@dlditool DLDI/ace3ds_sd.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
 scfw.sc:	$(ROM_DSONE)
 	@echo "Make SuperCard DSONE"
 	@cp $< $@
-	@dlditool DLDI/scds3.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/scds3.dldi $<
 
 akmenu4.nds:	$(ROM_02000450)
 	@echo "Make AK2"
 	@cp $< $@
-	@dlditool DLDI/ak2_sd.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ak2_sd.dldi $@
 
 ttmenu.dat:		$(ROM_02000450)
 	@echo "Make DSTT"
 	@cp $< $@
-	@dlditool DLDI/ttio_sdhc.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ttio_sdhc.dldi $@
 
 DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM_02000450)
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
-	@dlditool DLDI/scdssdhc2.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/scdssdhc2.dldi $@
 
 # Hack TTMenu.dat to bypass signature checks
 r4.dat: 	ttmenu.dat
@@ -312,39 +312,39 @@ r4.dat: 	ttmenu.dat
 _dsmenu.dat:	$(ROM_02000000)
 	@echo "Make R4iDSN"
 	@cp $< $@
-	@dlditool DLDI/r4idsn_sd.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/r4idsn_sd.dldi $@
 
 dsedgei.dat:	$(ROM_02000800)
 	@echo "Make EDGEi"
 	@cp $< $@
-	@dlditool DLDI/ak2_sd.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ak2_sd.dldi $@
 
 MAZE/_ds_menu.dat:	$(ROM_02000000)
 	@echo "Make Amaze3DS/R4igold.cc Wood"
 	@[ -d MAZE ] || mkdir -p MAZE
 	@cp $< $@
-	@dlditool DLDI/ak2_sd.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ak2_sd.dldi $@
 
 r4ids.cn/_ds_menu.dat:	$(ROM_02000800)
 	@echo "Make r4ids.cn"
 	@[ -d r4ids.cn ] || mkdir -p r4ids.cn
 	@cp $< $@
-	@dlditool DLDI/ak2_sd.dldi $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ak2_sd.dldi $@
 
 R4iLS/_dsmenu.dat:	$(ROM_R4ILS)
 	@echo "Make R4iLS"
 	@[ -d R4iLS ] || mkdir -p R4iLS
-	@dlditool DLDI/ace3ds_sd.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
 Gateway/_dsmenu.dat:	$(ROM_GATEWAY)
 	@echo "Make GW"
 	@[ -d Gateway ] || mkdir -p Gateway
-	@dlditool DLDI/ace3ds_sd.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ace3ds_sd.dldi $<
 	@r4denc --key 0x4002 $< $@
 
 G003/g003menu.eng:	$(ROM_02000000)
 	@echo "Make GMP-Z003"
 	@[ -d G003 ] || mkdir -p G003
-	@dlditool DLDI/g003.dldi $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/g003.dldi $<
 	@./resource/dsbize/dsbize $< $@ 0x12
