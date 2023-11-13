@@ -136,19 +136,18 @@ akmenu4.nds:	$(TARGET)_02000450.nds
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
 
-ttmenu.dat:		$(TARGET)_02000450.nds
+ttmenu.dat:		$(TARGET).nds
 	@echo "Make DSTT"
 	@cp $< $@
 	@dlditool DLDI/ttio_sdhc.dldi $@
 
-DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET)_02000450.nds
+DSOneSDHC_DSOnei/ttmenu.dat:	$(TARGET).nds
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
 	@dlditool DLDI/scdssdhc2.dldi $@
 
-# Hack TTMenu.dat to bypass signature checks
-r4.dat: 	ttmenu.dat
+r4.dat: 	$(TARGET)_r4isdhc.nds
 	@echo "Make R4i-SDHC"
 	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
 	@$(PYTHON) resource/r4isdhc/r4isdhc.py arm9.bin new9.bin
@@ -212,6 +211,10 @@ $(TARGET)_r4ils.nds	:	$(TARGET).elf $(TARGET).arm7.elf
 $(TARGET)_gateway.nds	:	$(TARGET).elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -g "####" "##" "R4IT" -c $@ -9 $(TARGET).elf -7 $(TARGET).arm7.elf
 
+# ASM patches to workaround signature checks with R4i-SDHC carts
+$(TARGET)_r4isdhc.nds	:	$(TARGET)_r4isdhc.elf $(TARGET).arm7.elf
+	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_r4isdhc.elf -7 $(TARGET).arm7.elf
+
 # 0x02000450
 $(TARGET)_02000450.nds	:	$(TARGET)_02000450.elf $(TARGET).arm7.elf
 	@ndstool	-h 0x200 -c $@ -9 $(TARGET)_02000450.elf -7 $(TARGET).arm7.elf
@@ -242,6 +245,10 @@ $(TARGET).arm7.elf:
 $(TARGET)_02000800.elf: bootloader bootstub
 	@$(MAKE) -C arm9_r4ids.cn
 	@cp arm9_r4ids.cn/$(TARGET).elf $@
+
+$(TARGET)_r4isdhc.elf: bootloader bootstub
+	@$(MAKE) -C arm9_r4isdhc
+	@cp arm9_r4isdhc/$(TARGET).elf $@
 
 $(TARGET)_02000000.elf: bootloader bootstub
 	@$(MAKE) -C arm9_crt0set CRT0=0x02000000
