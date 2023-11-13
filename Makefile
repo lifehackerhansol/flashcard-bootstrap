@@ -304,9 +304,9 @@ DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM_02000450)
 # Hack TTMenu.dat to bypass signature checks
 r4.dat: 	ttmenu.dat
 	@echo "Make R4i-SDHC"
-	@ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
 	@$(PYTHON) resource/r4isdhc/r4isdhc.py arm9.bin new9.bin
-	@ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
+	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
 _dsmenu.dat:	$(ROM_02000000)
