@@ -7,16 +7,6 @@ BLOCKSDSEXT	?= /opt/blocksds/external
 
 export TOPDIR := $(shell pwd $(CURDIR))
 
-ifneq (,$(shell which python3))
-PYTHON	:= python3
-else ifneq (,$(shell which python2))
-PYTHON	:= python2
-else ifneq (,$(shell which python))
-PYTHON	:= python
-else
-$(error "Python not found in PATH, please install it.")
-endif
-
 # User config
 # ===========
 
@@ -108,8 +98,9 @@ clean:
 	$(V)$(MAKE) -C arm9 clean --no-print-directory
 	$(V)$(MAKE) -C arm9_crt0set clean --no-print-directory
 	$(V)$(MAKE) -C arm9_r4ids.cn clean --no-print-directory
+	$(V)$(MAKE) -C arm9_r4isdhc clean --no-print-directory
 	$(V)$(MAKE) -f Makefile.arm7 clean --no-print-directory
-	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) build $(SDIMAGE) $(DATA)
+	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) $(ROM_R4ISDHC) build $(SDIMAGE) $(DATA)
 	$(V)$(RM) bootstrap  bootstrap.zip \
 			_ds_menu.dat N5 ez5sys.bin _boot_mp.nds bootme.nds r4i.sys ismat.dat _ds_menu.nds ez5isys.bin ACEP akmenu4.nds \
 			ttmenu.dat r4.dat _dsmenu.dat dsedgei.dat MAZE r4ids.cn R4iLS Gateway G003 DSOneSDHC_DSOnei scfw.sc
@@ -122,6 +113,9 @@ arm9_02000000:
 
 arm9_02000450:
 	$(V)+$(MAKE) -C arm9_crt0set --no-print-directory CRT0=0x02000450
+
+arm9_r4isdhc:
+	$(V)+$(MAKE) -C arm9_r4isdhc --no-print-directory
 
 arm9_02000800:
 	$(V)+$(MAKE) -C arm9_r4ids.cn --no-print-directory
@@ -173,6 +167,14 @@ $(ROM_DSONE): arm9 arm7
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 -g "ENG0" \
 		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
+
+$(ROM_R4ISDHC): arm9_r4isdhc arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 arm9_r4isdhc/build/arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
 
@@ -302,12 +304,10 @@ DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM_02000450)
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/scdssdhc2.dldi $@
 
 # Hack TTMenu.dat to bypass signature checks
-r4.dat: 	ttmenu.dat
+r4.dat: 	$(ROM_R4ISDHC)
 	@echo "Make R4i-SDHC"
-	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -x $< -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
-	@$(PYTHON) resource/r4isdhc/r4isdhc.py arm9.bin new9.bin
-	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
-	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
+	@cp $< $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ttio_sdhc.dldi $@
 
 _dsmenu.dat:	$(ROM_02000000)
 	@echo "Make R4iDSN"
