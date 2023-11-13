@@ -13,10 +13,10 @@ export LIBNDS32	:= $(TOPDIR)/libnds32
 # Source code paths
 # -----------------
 
-SOURCEDIRS	:= ../arm9/source source
+SOURCEDIRS	:= arm9/source arm9_r4isdhc/source
 INCLUDEDIRS	:= 
 GFXDIRS		:= 
-BINDIRS		:= ../data
+BINDIRS		:= data
 AUDIODIRS	:=
 
 # Defines passed to all files
@@ -33,8 +33,8 @@ LIBDIRS		:= $(LIBNDS32)
 # Build artifacts
 # ---------------
 
-BUILDDIR	:= build/arm9
-NAME		:= arm9
+NAME		:= arm9_r4isdhc
+BUILDDIR	:= build/$(NAME)
 ELF		:= build/$(NAME).elf
 DUMP		:= build/$(NAME).dump
 MAP		:= build/$(NAME).map
@@ -121,7 +121,7 @@ CXXFLAGS	+= -std=gnu++14 $(WARNFLAGS) $(DEFINES) $(ARCH) \
 LDFLAGS		:= -mthumb -mthumb-interwork $(LIBDIRSFLAGS) \
 		   -Wl,-Map,$(MAP) -Wl,--gc-sections -nostdlib \
 		   -T$(BLOCKSDS)/sys/crts/ds_arm9.mem \
-		   -T./ds_arm9_r4isdhc.ld \
+		   -T./arm9_r4isdhc/ds_arm9_r4isdhc.ld \
 		   -Wl,--no-warn-rwx-segments \
 		   -Wl,--defsym=vfprintf=__i_vfprintf -Wl,--defsym=vfscanf=__i_vfscanf \
 		   -Wl,--start-group $(LIBS) -lgcc -Wl,--end-group

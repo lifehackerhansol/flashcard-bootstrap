@@ -60,6 +60,7 @@ ROM		:= $(NAME).nds
 ROM_R4ILS		:= $(NAME)_r4ils.nds
 ROM_GATEWAY		:= $(NAME)_gateway.nds
 ROM_DSONE		:= $(NAME)_dsone.nds
+ROM_R4ISDHC		:= $(NAME)_r4isdhc.nds
 ROM_02000000		:= $(NAME)_02000000.nds
 ROM_02000450		:= $(NAME)_02000450.nds
 ROM_02000800		:= $(NAME)_02000800.nds
@@ -67,7 +68,7 @@ ROM_02000800		:= $(NAME)_02000800.nds
 # Targets
 # -------
 
-.PHONY: all clean dist arm9 arm7 dldipatch sdimage
+.PHONY: all clean dist arm9 arm9_r4isdhc arm7 dldipatch sdimage
 
 all: $(ROM) \
 			_ds_menu.dat \
@@ -95,30 +96,30 @@ all: $(ROM) \
 
 clean:
 	@echo "  CLEAN"
-	$(V)$(MAKE) -C arm9 clean --no-print-directory
-	$(V)$(MAKE) -C arm9_crt0set clean --no-print-directory
-	$(V)$(MAKE) -C arm9_r4ids.cn clean --no-print-directory
-	$(V)$(MAKE) -C arm9_r4isdhc clean --no-print-directory
+	$(V)$(MAKE) -f Makefile.arm9 clean --no-print-directory
+	$(V)$(MAKE) -f Makefile.arm9_crt0set clean --no-print-directory
+	$(V)$(MAKE) -f Makefile.arm9_r4ids clean --no-print-directory
+	$(V)$(MAKE) -f Makefile.arm9_r4isdhc clean --no-print-directory
 	$(V)$(MAKE) -f Makefile.arm7 clean --no-print-directory
-	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) $(ROM_R4ISDHC) build $(SDIMAGE) $(DATA)
+	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) $(ROM_R4ISDHC) build $(SDIMAGE)
 	$(V)$(RM) bootstrap  bootstrap.zip \
 			_ds_menu.dat N5 ez5sys.bin _boot_mp.nds bootme.nds r4i.sys ismat.dat _ds_menu.nds ez5isys.bin ACEP akmenu4.nds \
 			ttmenu.dat r4.dat _dsmenu.dat dsedgei.dat MAZE r4ids.cn R4iLS Gateway G003 DSOneSDHC_DSOnei scfw.sc
 
 arm9:
-	$(V)+$(MAKE) -C arm9 --no-print-directory
+	$(V)+$(MAKE) -f Makefile.arm9 --no-print-directory
 
 arm9_02000000:
-	$(V)+$(MAKE) -C arm9_crt0set --no-print-directory CRT0=0x02000000
+	$(V)+$(MAKE) -f Makefile.arm9_crt0set --no-print-directory CRT0=0x02000000
 
 arm9_02000450:
-	$(V)+$(MAKE) -C arm9_crt0set --no-print-directory CRT0=0x02000450
+	$(V)+$(MAKE) -f Makefile.arm9_crt0set --no-print-directory CRT0=0x02000450
 
 arm9_r4isdhc:
-	$(V)+$(MAKE) -C arm9_r4isdhc --no-print-directory
+	$(V)+$(MAKE) -f Makefile.arm9_r4isdhc
 
 arm9_02000800:
-	$(V)+$(MAKE) -C arm9_r4ids.cn --no-print-directory
+	$(V)+$(MAKE) -f Makefile.arm9_r4ids --no-print-directory
 
 arm7:
 	$(V)+$(MAKE) -f Makefile.arm7 --no-print-directory
@@ -142,7 +143,7 @@ $(ROM): arm9 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 \
-		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
 
@@ -150,7 +151,7 @@ $(ROM_GATEWAY): arm9 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 -g "####" "##" "R4IT" \
-		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
 
@@ -158,7 +159,7 @@ $(ROM_R4ILS): arm9 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 -g "####" "##" "R4XX" \
-		-7 build/arm7.elf -9 arm9/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
 
@@ -166,15 +167,7 @@ $(ROM_DSONE): arm9 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 -g "ENG0" \
-		-7 build/arm7.elf -9 arm9/build/arm9.elf \
-		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
-		$(NDSTOOL_FAT)
-
-$(ROM_R4ISDHC): arm9_r4isdhc arm7
-	@echo "  NDSTOOL $@"
-	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
-		-h 0x200 \
-		-7 build/arm7.elf -9 arm9_r4isdhc/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
 
@@ -182,28 +175,33 @@ $(ROM_02000000): arm9_02000000 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 \
-		-7 build/arm7.elf -9 arm9_crt0set/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9_0x02000000.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
-	$(V)+$(MAKE) -C arm9_crt0set clean
 
 $(ROM_02000450): arm9_02000450 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 \
-		-7 build/arm7.elf -9 arm9_crt0set/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9_0x02000450.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
-	$(V)+$(MAKE) -C arm9_crt0set clean
 
 $(ROM_02000800): arm9_02000800 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-h 0x200 \
-		-7 build/arm7.elf -9 arm9_r4ids.cn/build/arm9.elf \
+		-7 build/arm7.elf -9 build/arm9_r4ids.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
-	$(V)+$(MAKE) -C arm9_crt0set clean
+
+$(ROM_R4ISDHC): arm9_r4isdhc arm7
+	@echo "  NDSTOOL $@"
+	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
+		-h 0x200 \
+		-7 build/arm7.elf -9 build/arm9_r4isdhc.elf \
+		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		$(NDSTOOL_FAT)
 
 sdimage:
 	@echo "  MKFATIMG $(SDIMAGE) $(SDROOT)"
