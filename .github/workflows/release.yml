@@ -14,12 +14,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: build dsbize patcher
+      - name: Install needed packages
         run: |
           apt update
-          apt install -y python3 gcc
-          gcc -o resource/dsbize/dsbize resource/dsbize/dsbize.c
-          chmod +x resource/dsbize/dsbize
+          apt install -y python3 clang
       - name: Make flashcard-bootstrap
         run: |
           chmod +x build.sh
