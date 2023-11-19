@@ -24,7 +24,7 @@ jobs:
       - name: Install needed packages
         run: |
           apt update
-          apt install -y python3 clang zip
+          apt install -y clang zip
       - name: Make flashcard-bootstrap
         run: |
           chmod +x build.sh
