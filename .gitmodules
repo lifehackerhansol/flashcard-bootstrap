@@ -1,7 +1,6 @@
 [submodule "bootloader"]
 	path = bootloader
 	url = https://github.com/lifehackerhansol/blocksds-bootloader
-	branch = blocksds-nodsi
 [submodule "DLDI"]
 	path = DLDI
 	url = https://github.com/DS-Homebrew/DLDI
