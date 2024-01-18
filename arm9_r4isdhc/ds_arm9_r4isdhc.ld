@@ -25,10 +25,10 @@ PHDRS {
 
 SECTIONS
 {
-    .r4i_sdhc_pad :
-    {
-        KEEP(*(.r4i_sdhc_pad))
-    } >ewram :main = 0x00
+	.r4i_sdhc_pad :
+	{
+		KEEP(*(.r4i_sdhc_pad))
+	} >ewram :main = 0x00
 
 	.crt0	:
 	{
@@ -271,6 +271,9 @@ SECTIONS
 		__arm9i_lma__ = LOADADDR(.twl);
 		__arm9i_start__ = ABSOLUTE(.);
 		*(.twl)
+		*(.twl.text .twl.text.*)
+		*(.twl.rodata .twl.rodata.*)
+		*(.twl.data .twl.data.*)
 		*.twl*(.text .stub .text.* .gnu.linkonce.t.*)
 		*.twl*(.rodata)
 		*.twl*(.roda)
@@ -284,7 +287,8 @@ SECTIONS
 	.twl_bss __arm9i_end__ (NOLOAD):
 	{
 		__twl_bss_start__ = ABSOLUTE(.);
-		*(.twl_bss)
+		*(.twl_bss .twl_bss.*)
+		*(.twl.bss .twl.bss.*)
 		*.twl*(.dynbss)
 		*.twl*(.gnu.linkonce.b*)
 		*.twl*(.bss*)
