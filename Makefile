@@ -56,7 +56,8 @@ all		:	$(TARGET).nds \
 			Gateway/_dsmenu.dat \
 			G003/g003menu.eng \
 			DSOneSDHC_DSOnei/ttmenu.dat \
-			scfw.sc
+			scfw.sc \
+			r4dspro.com/_ds_menu.dat
 
 dist	:	all
 	@mkdir -p bootstrap/M3R_iTDS_R4RTS/_system_/_sys_data
@@ -64,7 +65,7 @@ dist	:	all
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
 	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat _ds_menu.nds ez5isys.bin akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc bootstrap
-	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn bootstrap 
+	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn r4dspro.com bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
@@ -135,6 +136,12 @@ akmenu4.nds:	$(TARGET)_02000450.nds
 	@echo "Make AK2"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
+
+r4dspro.com/_ds_menu.dat:	akmenu4.nds
+	@echo "Make AK2 (broken CMD25)"
+	@[ -d r4dspro.com ] || mkdir -p r4dspro.com
+	@cp $< $@
+	@dlditool "DLDI/ak2_sd_singlewrite.dldi" $@
 
 ttmenu.dat:		$(TARGET).nds
 	@echo "Make DSTT"
