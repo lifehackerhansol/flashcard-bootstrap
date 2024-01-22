@@ -90,7 +90,8 @@ all: $(ROM) \
 			Gateway/_dsmenu.dat \
 			G003/g003menu.eng \
 			DSOneSDHC_DSOnei/ttmenu.dat \
-			scfw.sc
+			scfw.sc \
+			r4dspro.com/_ds_menu.dat
 
 clean:
 	@echo "  CLEAN"
@@ -102,7 +103,7 @@ clean:
 	$(V)$(RM) $(ROM) $(ROM_02000000) $(ROM_02000450) $(ROM_02000800) $(ROM_DSONE) $(ROM_R4ILS) $(ROM_GATEWAY) $(ROM_R4ISDHC) build $(SDIMAGE)
 	$(V)$(RM) bootstrap  bootstrap.zip \
 			_ds_menu.dat N5 ez5sys.bin _boot_mp.nds bootme.nds r4i.sys ismat.dat _ds_menu.nds ez5isys.bin ACEP akmenu4.nds \
-			ttmenu.dat r4.dat _dsmenu.dat dsedgei.dat MAZE r4ids.cn R4iLS Gateway G003 DSOneSDHC_DSOnei scfw.sc
+			ttmenu.dat r4.dat _dsmenu.dat dsedgei.dat MAZE r4ids.cn R4iLS Gateway G003 DSOneSDHC_DSOnei scfw.sc r4dspro.com
 
 arm9:
 	$(V)+$(MAKE) -f Makefile.arm9 --no-print-directory
@@ -216,7 +217,7 @@ dist	:	all
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
 	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat _ds_menu.nds ez5isys.bin akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc bootstrap
-	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn bootstrap 
+	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn r4dspro.com bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
 	@cp resource/N5/_ax_menu.dat bootstrap/N5/_ax_menu.dat
@@ -287,6 +288,12 @@ akmenu4.nds:	$(ROM_02000450)
 	@echo "Make AK2"
 	@cp $< $@
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ak2_sd.dldi $@
+
+r4dspro.com/_ds_menu.dat:	akmenu4.nds
+	@echo "Make AK2 (broken CMD25)"
+	@[ -d r4dspro.com ] || mkdir -p r4dspro.com
+	@cp $< $@
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/ak2_sd_singlewrite.dldi" $<
 
 ttmenu.dat:		$(ROM_02000450)
 	@echo "Make DSTT"
