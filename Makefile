@@ -293,7 +293,7 @@ r4dspro.com/_ds_menu.dat:	akmenu4.nds
 	@echo "Make AK2 (broken CMD25)"
 	@[ -d r4dspro.com ] || mkdir -p r4dspro.com
 	@cp $< $@
-	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/ak2_sd_singlewrite.dldi" $<
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/ak2_sd_singlewrite.dldi" $@
 
 ttmenu.dat:		$(ROM_02000450)
 	@echo "Make DSTT"
