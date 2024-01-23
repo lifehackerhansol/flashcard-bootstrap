@@ -18,3 +18,4 @@ build
 !resource/*/*
 resource/r4denc/r4denc
 resource/dsbize/dsbize
+*.exe
