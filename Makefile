@@ -5,6 +5,16 @@
 BLOCKSDS	?= /opt/blocksds/core
 BLOCKSDSEXT	?= /opt/blocksds/external
 
+ifneq (,$(shell which python3))
+PYTHON	:= python3
+else ifneq (,$(shell which python2))
+PYTHON	:= python2
+else ifneq (,$(shell which python))
+PYTHON	:= python
+else
+$(error "Python not found in PATH, please install it.")
+endif
+
 # User config
 # ===========
 
@@ -201,6 +211,10 @@ $(ROM_R4ISDHC): arm9_r4isdhc arm7
 		-7 build/arm7.elf -9 build/arm9_r4isdhc.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
 		$(NDSTOOL_FAT)
+	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -x $@ -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	@$(PYTHON) resource/r4isdhc/r4isdhc.py arm9.bin new9.bin
+	@$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
+	@rm -rf arm9.bin new9.bin arm7.bin banner.bin header.bin
 
 sdimage:
 	@echo "  MKFATIMG $(SDIMAGE) $(SDROOT)"
