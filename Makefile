@@ -309,18 +309,17 @@ r4dspro.com/_ds_menu.dat:	akmenu4.nds
 	@cp $< $@
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch "DLDI/ak2_sd_singlewrite.dldi" $@
 
-ttmenu.dat:		$(ROM_02000450)
+ttmenu.dat:		$(ROM)
 	@echo "Make DSTT"
 	@cp $< $@
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/ttio_sdhc.dldi $@
 
-DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM_02000450)
+DSOneSDHC_DSOnei/ttmenu.dat:	$(ROM)
 	@echo "Make DSONE SDHC"
 	@[ -d DSOneSDHC_DSOnei ] || mkdir -p DSOneSDHC_DSOnei
 	@cp $< $@
 	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/scdssdhc2.dldi $@
 
-# Hack TTMenu.dat to bypass signature checks
 r4.dat: 	$(ROM_R4ISDHC)
 	@echo "Make R4i-SDHC"
 	@cp $< $@
