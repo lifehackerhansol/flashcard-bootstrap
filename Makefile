@@ -50,6 +50,7 @@ all		:	$(TARGET).nds \
 			r4.dat \
 			_dsmenu.dat \
 			dsedgei.dat \
+			ezds.dat \
 			MAZE/_ds_menu.dat \
 			r4ids.cn/_ds_menu.dat \
 			R4iLS/_dsmenu.dat \
@@ -64,7 +65,7 @@ dist	:	all
 	@mkdir -p bootstrap/DSOneSDHC_DSOnei
 	@mkdir -p bootstrap/N5
 	@mkdir -p bootstrap/G003/system
-	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat _ds_menu.nds ez5isys.bin akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc bootstrap
+	@cp -r README.md _ds_menu.dat ez5sys.bin ttmenu.dat r4.dat _boot_mp.nds bootme.nds ismat.dat _ds_menu.nds ez5isys.bin akmenu4.nds _dsmenu.dat dsedgei.dat scfw.sc ezds.dat bootstrap
 	@cp -r MAZE ACEP R4iLS Gateway r4ids.cn r4dspro.com bootstrap 
 	@cp -r resource/M3R_iTDS_R4RTS/* bootstrap/M3R_iTDS_R4RTS/
 	@cp -r resource/DSOneSDHC_DSOnei/* bootstrap/DSOneSDHC_DSOnei/
@@ -170,6 +171,12 @@ dsedgei.dat:	$(TARGET)_02000800.nds
 	@echo "Make EDGEi"
 	@cp $< $@
 	@dlditool DLDI/ak2_sd.dldi $@
+
+ezds.dat:	$(TARGET).nds
+	@echo "Make EZ-Flash Parallel"
+	@cp $< $@
+	@dlditool DLDI/ez5n.dldi $@
+	@$(PYTHON) resource/dldinoap/dldinoap.py $@
 
 MAZE/_ds_menu.dat:	$(TARGET)_02000000.nds
 	@echo "Make Amaze3DS/R4igold.cc Wood"
@@ -277,5 +284,5 @@ clean:
 	@rm -rf arm*/data
 	@rm -rf $(TARGET)*.nds $(TARGET)*.elf
 	@rm -rf _ds_menu.dat _dsmenu.dat ez5sys.bin akmenu4.nds ttmenu.dat bootme.nds _boot_mp.nds ismat.dat _ds_menu.nds ez5isys.bin r4i.sys scfw.sc dsedgei.dat
-	@rm -rf ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003
+	@rm -rf ACEP R4iLS MAZE N5 Gateway DSOneSDHC_DSOnei r4ids.cn r4.dat G003 ezds.dat
 	@rm -rf data bootstrap bootstrap.zip
