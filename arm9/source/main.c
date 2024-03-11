@@ -7,7 +7,7 @@
 
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <fatfs.h>
+#include <fat.h>
 
 #include <stdio.h>
 

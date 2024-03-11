@@ -25,7 +25,7 @@
 #include <limits.h>
 
 #include <unistd.h>
-#include <fatfs.h>
+#include <fat.h>
 
 #include "load_bin.h"
 
