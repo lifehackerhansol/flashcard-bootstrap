@@ -29,6 +29,7 @@ Currently available flashcarts:
 - EZ-Flash Vi (ez5isys.bin)
 - r4i.cn carts (_ds_menu.nds)
 - r4dspro.com (in r4dspro.com folder)
+- EZ-Flash Parallel (ezds.dat)
 
 Copy the appropriate files to root, and then add any homebrew of your choice to root and rename it BOOT.NDS.
 
